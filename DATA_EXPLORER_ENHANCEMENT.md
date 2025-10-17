@@ -5,6 +5,7 @@
 ### ✅ **What's Been Enhanced:**
 
 1. **Filter Dropdown Enhancement**:
+
    - **Organized by Categories**: Grouped 12 indicators into logical sections
    - **Economic Indicators**: GDP per Capita, Population, Net Migration
    - **Health & Demographics**: Life Expectancy, Infant Mortality, Female/Male Population %
@@ -12,6 +13,7 @@
    - **Development Indicators**: Urban Population %
 
 2. **Data Table Expansion**:
+
    - **13 Columns Total**: All 12 social indicators + Actions column
    - **Compact Headers**: Abbreviated for better display (Life Exp., Infant Mort., etc.)
    - **Proper Formatting**:
@@ -23,6 +25,7 @@
      - Infant Mortality: 1 decimal place per 1,000 births
 
 3. **Educational Information Panel**:
+
    - **Comprehensive Overview**: Explains all 12 indicators with descriptions
    - **Categorized Display**: Grouped by Economic, Health, and Development indicators
    - **Usage Tips**: Guidance on filtering and sorting functionality
@@ -36,21 +39,23 @@
 
 ### 📊 **Available Social Indicators:**
 
-| Category | Indicators | Format |
-|----------|------------|--------|
-| **Economic** | GDP per Capita, Population, Net Migration | Currency, Numbers |
-| **Health** | Life Expectancy, Infant Mortality, Gender Distribution | Years, Rates, Percentages |
-| **Technology** | Internet Penetration, School Enrollment, HCI | Percentages, Index |
-| **Development** | Urban Population | Percentages |
+| Category        | Indicators                                             | Format                    |
+| --------------- | ------------------------------------------------------ | ------------------------- |
+| **Economic**    | GDP per Capita, Population, Net Migration              | Currency, Numbers         |
+| **Health**      | Life Expectancy, Infant Mortality, Gender Distribution | Years, Rates, Percentages |
+| **Technology**  | Internet Penetration, School Enrollment, HCI           | Percentages, Index        |
+| **Development** | Urban Population                                       | Percentages               |
 
 ### 🔍 **Enhanced Features:**
 
 1. **Advanced Filtering**:
+
    - Filter by any of the 12 indicators
    - Country and year-based filtering
    - Grouped dropdown options for easy navigation
 
 2. **Comprehensive Data Display**:
+
    - All database columns visible in single view
    - Proper null value handling ("N/A" display)
    - Formatted numbers for readability

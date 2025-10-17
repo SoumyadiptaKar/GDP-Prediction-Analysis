@@ -5,23 +5,27 @@
 ### What We Built:
 
 1. **Comprehensive Research Blog** (`/blog`)
+
    - Professional academic presentation with University of Helsinki branding
    - Your complete research narrative with 9 detailed bullet points
    - Interactive visualizations using Leaflet maps and Plotly charts
    - University-grade styling and layout
 
 2. **Database Enhancements**
+
    - Added `get_geographical_analysis()` method to database_crud.py
    - Supports geographical data, regional analysis, and correlation data
    - Optimized queries for blog visualizations
 
 3. **Interactive Geographic Mapping**
+
    - **Global GDP Map**: Interactive Leaflet map showing GDP distribution
    - **Color-coded countries** by GDP per capita
    - **Popup information** with GDP, population, life expectancy, internet, urbanization
    - **Legend** with GDP ranges and color coding
 
 4. **Static Visualizations Generated**
+
    - **Correlation Heatmap**: Social indicators correlation matrix
    - **GDP Development Scatter**: 4-panel comparison (Life Expectancy, Internet, Education, Urbanization vs GDP)
    - **Regional Analysis**: Box plots comparing Northern, Southern, and Tropical regions
