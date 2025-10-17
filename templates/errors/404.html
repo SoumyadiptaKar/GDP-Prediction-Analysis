@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Page Not Found - GDP Analytics{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+            <div class="error-template">
+                <h1>
+                    <i class="fas fa-exclamation-triangle text-warning"></i>
+                </h1>
+                <h2>404 Not Found</h2>
+                <div class="error-details">
+                    Sorry, the page you are looking for doesn't exist.
+                </div>
+                <div class="error-actions mt-4">
+                    <a href="{{ url_for('index') }}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-home me-2"></i>Take Me Home
+                    </a>
+                    <a href="{{ url_for('data_explorer') }}" class="btn btn-outline-secondary btn-lg">
+                        <i class="fas fa-search me-2"></i>Explore Data
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

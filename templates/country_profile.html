@@ -1,0 +1,281 @@
+{% extends "base.html" %}
+
+{% block title %}{{ country.name }} - Country Profile{% endblock %}
+
+{% block content %}
+<!-- Country Header -->
+<div class="country-header">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h1 class="display-5 mb-2">
+                {{ country.name }}
+                <small class="text-white-50">({{ country.country_code }})</small>
+            </h1>
+            <p class="lead mb-0">Economic Profile and Historical Data</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <div class="d-flex align-items-center justify-content-md-end">
+                <div class="me-3">
+                    <small class="text-white-50">Coordinates:</small><br>
+                    <span>{{ "{:.2f}".format(country.lat) }}, {{ "{:.2f}".format(country.lng) }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Latest Metrics Cards -->
+{% if latest %}
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <div class="metric-card">
+            <div class="metric-value">
+                {% if latest.gdp %}
+                    ${{ "{:,.1f}".format(latest.gdp / 1000) }}B
+                {% else %}
+                    N/A
+                {% endif %}
+            </div>
+            <div class="metric-label">GDP ({{ latest.year }})</div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <div class="metric-card">
+            <div class="metric-value">
+                {% if latest.population %}
+                    {{ "{:,.0f}".format(latest.population / 1000000) }}M
+                {% else %}
+                    N/A
+                {% endif %}
+            </div>
+            <div class="metric-label">Population</div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <div class="metric-card">
+            <div class="metric-value">
+                {% if latest.life_expectancy %}
+                    {{ "{:.1f}".format(latest.life_expectancy) }}
+                {% else %}
+                    N/A
+                {% endif %}
+            </div>
+            <div class="metric-label">Life Expectancy</div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <div class="metric-card">
+            <div class="metric-value">
+                {% if latest.internet %}
+                    {{ "{:.1f}".format(latest.internet) }}%
+                {% else %}
+                    N/A
+                {% endif %}
+            </div>
+            <div class="metric-label">Internet Penetration</div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Main Chart Section -->
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-chart-line me-2"></i>
+                            <span id="trend-chart-title">GDP Trend Over Time</span>
+                        </h5>
+                    </div>
+                    <div class="col-md-6">
+                        <select class="form-select" id="metric-selector">
+                            <option value="gdp">GDP per Capita</option>
+                            <option value="population">Population</option>
+                            <option value="life_expectancy">Life Expectancy</option>
+                            <option value="internet">Internet Penetration</option>
+                            <option value="hci">Human Capital Index</option>
+                            <option value="urban_pop">Urban Population</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="chart-container-main" id="main-trend-chart" data-chart="line" style="height: 400px;">
+                    <!-- Chart will be loaded here without loading spinner -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Historical Data Table -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-history me-2"></i>Historical Data
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if data %}
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Year</th>
+                                <th>GDP (USD Billion)</th>
+                                <th>Population</th>
+                                <th>Life Expectancy</th>
+                                <th>Internet %</th>
+                                <th>Urban Pop %</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in data[-10:] %}
+                            <tr>
+                                <td><strong>{{ row.year }}</strong></td>
+                                <td>
+                                    {% if row.gdp %}
+                                        ${{ "{:,.1f}".format(row.gdp / 1000) }}B
+                                    {% else %}
+                                        <span class="text-muted">N/A</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if row.population %}
+                                        {{ "{:,}".format(row.population) }}
+                                    {% else %}
+                                        <span class="text-muted">N/A</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if row.life_expectancy %}
+                                        {{ "{:.1f}".format(row.life_expectancy) }} years
+                                    {% else %}
+                                        <span class="text-muted">N/A</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if row.internet %}
+                                        {{ "{:.1f}".format(row.internet) }}%
+                                    {% else %}
+                                        <span class="text-muted">N/A</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if row.urban_pop %}
+                                        {{ "{:.1f}".format(row.urban_pop) }}%
+                                    {% else %}
+                                        <span class="text-muted">N/A</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-exclamation-triangle text-warning fa-2x mb-3"></i>
+                    <h6>No historical data available</h6>
+                    <p class="text-muted">Data for this country is not available in our database.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Actions -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="fas fa-tools me-2"></i>Actions
+                </h5>
+                <div class="btn-group" role="group">
+                    <a href="{{ url_for('data_explorer', country=country.country_code) }}" class="btn btn-outline-primary">
+                        <i class="fas fa-table me-1"></i>View All Data
+                    </a>
+                    <button class="btn btn-outline-success" onclick="downloadCountryData()">
+                        <i class="fas fa-download me-1"></i>Download CSV
+                    </button>
+                    <button class="btn btn-outline-info" onclick="compareCountry()">
+                        <i class="fas fa-balance-scale me-1"></i>Compare
+                    </button>
+                    <a href="{{ url_for('data_explorer') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-1"></i>Back to Explorer
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Country-specific data
+    const countryCode = '{{ country.country_code }}';
+    const countryName = '{{ country.name }}';
+    
+    // Load country-specific charts
+    document.addEventListener('DOMContentLoaded', function() {
+        loadMainChart();
+        
+        // Add event listener for metric selector
+        document.getElementById('metric-selector').addEventListener('change', function() {
+            loadMainChart();
+        });
+    });
+    
+    function loadMainChart() {
+        const metric = document.getElementById('metric-selector').value;
+        updateChartTitle(metric);
+        
+        // Load chart data for this country and metric
+        const params = { 
+            country: countryCode, 
+            metric: metric 
+        };
+        
+        loadChart('main-trend-chart', 'line', null, params);
+    }
+    
+    function updateChartTitle(metric) {
+        const metricTitles = {
+            'gdp': 'GDP per Capita Trend',
+            'population': 'Population Growth',
+            'life_expectancy': 'Life Expectancy Progress',
+            'internet': 'Internet Adoption',
+            'hci': 'Human Capital Development',
+            'urban_pop': 'Urbanization Progress'
+        };
+        
+        document.getElementById('trend-chart-title').textContent = metricTitles[metric] || 'Trend Analysis';
+    }
+    
+    function downloadCountryData() {
+        const url = `/api/data/${countryCode}?format=csv`;
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${countryCode}_data.csv`;
+        link.click();
+        
+        GDPAnalytics.showAlert(`Downloading data for ${countryName}`, 'info');
+    }
+    
+    function compareCountry() {
+        // Redirect to comparison page (to be implemented)
+        GDPAnalytics.showAlert('Country comparison feature coming soon!', 'info');
+    }
+</script>
+{% endblock %}

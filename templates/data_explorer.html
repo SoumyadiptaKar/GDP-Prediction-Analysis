@@ -1,0 +1,396 @@
+{% extends "base.html" %}
+
+{% block title %}Data Explorer - GDP Analytics{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="display-5 mb-4">
+            <i class="fas fa-search me-3"></i>Data Explorer
+        </h1>
+        <p class="lead text-muted">Browse and filter economic data from around the world</p>
+    </div>
+</div>
+
+<!-- Filter Panel -->
+<div class="row">
+    <div class="col-12">
+        <div class="filter-panel">
+            <h5><i class="fas fa-filter me-2"></i>Filters</h5>
+            <form method="GET" class="filter-form">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <label for="country" class="form-label">Country</label>
+                        <select class="form-select" id="country" name="country">
+                            <option value="">All Countries</option>
+                            {% for country in countries %}
+                            <option value="{{ country.country_code }}" 
+                                    {% if filters.country == country.country_code %}selected{% endif %}>
+                                {{ country.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-3 mb-3">
+                        <label for="year" class="form-label">Year</label>
+                        <select class="form-select" id="year" name="year">
+                            <option value="">All Years</option>
+                            {% for year in years %}
+                            <option value="{{ year }}" 
+                                    {% if filters.year == year %}selected{% endif %}>
+                                {{ year }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-3 mb-3">
+                        <label for="metric" class="form-label">Focus Metric</label>
+                        <select class="form-select" id="metric" name="metric">
+                            <option value="">All Metrics</option>
+                            <optgroup label="Economic Indicators">
+                                <option value="gdp" {% if filters.metric == 'gdp' %}selected{% endif %}>GDP per Capita</option>
+                                <option value="population" {% if filters.metric == 'population' %}selected{% endif %}>Population</option>
+                                <option value="migration" {% if filters.metric == 'migration' %}selected{% endif %}>Net Migration</option>
+                            </optgroup>
+                            <optgroup label="Health & Demographics">
+                                <option value="life_expectancy" {% if filters.metric == 'life_expectancy' %}selected{% endif %}>Life Expectancy</option>
+                                <option value="infant_mortality" {% if filters.metric == 'infant_mortality' %}selected{% endif %}>Infant Mortality</option>
+                                <option value="female" {% if filters.metric == 'female' %}selected{% endif %}>Female Population %</option>
+                                <option value="male" {% if filters.metric == 'male' %}selected{% endif %}>Male Population %</option>
+                            </optgroup>
+                            <optgroup label="Technology & Education">
+                                <option value="internet" {% if filters.metric == 'internet' %}selected{% endif %}>Internet Penetration</option>
+                                <option value="enrollment" {% if filters.metric == 'enrollment' %}selected{% endif %}>School Enrollment</option>
+                                <option value="hci" {% if filters.metric == 'hci' %}selected{% endif %}>Human Capital Index</option>
+                            </optgroup>
+                            <optgroup label="Development Indicators">
+                                <option value="urban_pop" {% if filters.metric == 'urban_pop' %}selected{% endif %}>Urban Population %</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-3 mb-3 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary me-2">
+                            <i class="fas fa-search me-1"></i>Filter
+                        </button>
+                        <a href="{{ url_for('data_explorer') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-undo me-1"></i>Reset
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Social Indicators Information -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-info-circle me-2"></i>Social Indicators Overview
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="text-muted mb-3">This dataset contains 12 comprehensive social and economic indicators spanning 1960-2023 across 250 countries:</p>
+                
+                <div class="row">
+                    <div class="col-md-4">
+                        <h6 class="text-primary"><i class="fas fa-chart-line me-1"></i>Economic Indicators</h6>
+                        <ul class="list-unstyled small">
+                            <li><strong>GDP:</strong> Gross Domestic Product per capita (USD)</li>
+                            <li><strong>Population:</strong> Total population count</li>
+                            <li><strong>Migration:</strong> Net migration (positive = immigration)</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <h6 class="text-success"><i class="fas fa-heartbeat me-1"></i>Health & Demographics</h6>
+                        <ul class="list-unstyled small">
+                            <li><strong>Life Exp.:</strong> Life expectancy at birth (years)</li>
+                            <li><strong>Infant Mort.:</strong> Infant mortality rate per 1,000 births</li>
+                            <li><strong>Female %:</strong> Female population percentage</li>
+                            <li><strong>Male %:</strong> Male population percentage</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <h6 class="text-info"><i class="fas fa-graduation-cap me-1"></i>Development Indicators</h6>
+                        <ul class="list-unstyled small">
+                            <li><strong>Internet %:</strong> Internet penetration rate</li>
+                            <li><strong>Education %:</strong> School enrollment rate</li>
+                            <li><strong>HCI:</strong> Human Capital Index (0-1 scale)</li>
+                            <li><strong>Urban %:</strong> Urban population percentage</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="alert alert-light mt-3">
+                    <small>
+                        <i class="fas fa-lightbulb me-1"></i>
+                        <strong>Tip:</strong> Use the focus metric filter to highlight specific indicators, or sort columns by clicking headers. 
+                        The table displays the most recent 5 years of data by default.
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Data Summary -->
+{% if data %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>
+            Showing <strong>{{ data|length }}</strong> records
+            {% if total_rows > data|length %}
+            out of <strong>{{ total_rows }}</strong> total
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Data Table -->
+<div class="row">
+    <div class="col-12">
+        <div class="data-table-container">
+            {% if data %}
+            <div class="table-responsive">
+                <table class="table table-hover data-table">
+                    <thead class="table-light">
+                        <tr>
+                            <th data-sort="country_code">Country</th>
+                            <th data-sort="year">Year</th>
+                            <th data-sort="gdp">GDP</th>
+                            <th data-sort="population">Population</th>
+                            <th data-sort="life_expectancy">Life Exp.</th>
+                            <th data-sort="infant_mortality">Infant Mort.</th>
+                            <th data-sort="internet">Internet %</th>
+                            <th data-sort="enrollment">Education %</th>
+                            <th data-sort="hci">HCI</th>
+                            <th data-sort="urban_pop">Urban %</th>
+                            <th data-sort="migration">Migration</th>
+                            <th data-sort="female">Female %</th>
+                            <th data-sort="male">Male %</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in data %}
+                        <tr data-country-code="{{ row.country_code }}">
+                            <td>
+                                <strong>{{ row.country_code }}</strong>
+                            </td>
+                            <td>{{ row.year }}</td>
+                            <td>
+                                {% if row.gdp %}
+                                    ${{ "{:,.0f}".format(row.gdp) }}
+                                {% else %}
+                                    <span class="text-muted">N/A</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if row.population %}
+                                    {{ "{:,}".format(row.population) }}
+                                {% else %}
+                                    <span class="text-muted">N/A</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if row.life_expectancy %}
+                                    {{ "{:.1f}".format(row.life_expectancy) }}
+                                {% else %}
+                                    <span class="text-muted">N/A</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if row.infant_mortality %}
+                                    {{ "{:.1f}".format(row.infant_mortality) }}
+                                {% else %}
+                                    <span class="text-muted">N/A</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if row.internet %}
+                                    {{ "{:.1f}".format(row.internet) }}%
+                                {% else %}
+                                    <span class="text-muted">N/A</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if row.enrollment %}
+                                    {{ "{:.1f}".format(row.enrollment * 100) }}%
+                                {% else %}
+                                    <span class="text-muted">N/A</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if row.hci %}
+                                    {{ "{:.3f}".format(row.hci) }}
+                                {% else %}
+                                    <span class="text-muted">N/A</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if row.urban_pop %}
+                                    {{ "{:.1f}".format(row.urban_pop) }}%
+                                {% else %}
+                                    <span class="text-muted">N/A</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if row.migration %}
+                                    {{ "{:,}".format(row.migration|int) }}
+                                {% else %}
+                                    <span class="text-muted">N/A</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if row.female %}
+                                    {{ "{:.1f}".format(row.female) }}%
+                                {% else %}
+                                    <span class="text-muted">N/A</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if row.male %}
+                                    {{ "{:.1f}".format(row.male) }}%
+                                {% else %}
+                                    <span class="text-muted">N/A</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{{ url_for('country_profile', country_code=row.country_code) }}" 
+                                   class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-eye me-1"></i>View
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Pagination -->
+            {% if total_pages > 1 %}
+            <div class="d-flex justify-content-between align-items-center p-3">
+                <div>
+                    <small class="text-muted">
+                        Page {{ current_page }} of {{ total_pages }}
+                    </small>
+                </div>
+                <nav>
+                    <ul class="pagination pagination-sm mb-0">
+                        {% if current_page > 1 %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ current_page - 1 }}">Previous</a>
+                        </li>
+                        {% endif %}
+                        
+                        {% for page_num in range(1, total_pages + 1) %}
+                            {% if page_num == current_page %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ page_num }}</span>
+                            </li>
+                            {% elif page_num == 1 or page_num == total_pages or (page_num >= current_page - 2 and page_num <= current_page + 2) %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
+                            </li>
+                            {% elif page_num == current_page - 3 or page_num == current_page + 3 %}
+                            <li class="page-item disabled">
+                                <span class="page-link">...</span>
+                            </li>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if current_page < total_pages %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ current_page + 1 }}">Next</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+            {% endif %}
+            
+            {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-database fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">No data available</h5>
+                <p class="text-muted">Try adjusting your filters or check back later.</p>
+                <a href="{{ url_for('index') }}" class="btn btn-primary">
+                    <i class="fas fa-home me-2"></i>Back to Dashboard
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Export Options -->
+{% if data %}
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="fas fa-download me-2"></i>Export Data
+                </h5>
+                <p class="card-text text-muted">Download the current filtered dataset for further analysis.</p>
+                <button class="btn btn-success" onclick="exportToCSV()">
+                    <i class="fas fa-file-csv me-2"></i>Export as CSV
+                </button>
+                <button class="btn btn-info" onclick="exportToJSON()">
+                    <i class="fas fa-file-code me-2"></i>Export as JSON
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Export functions
+    function exportToCSV() {
+        const params = new URLSearchParams(window.location.search);
+        params.set('format', 'csv');
+        const exportUrl = `/api/export?${params.toString()}`;
+        
+        // Create a temporary link to download the file
+        const link = document.createElement('a');
+        link.href = exportUrl;
+        link.download = `gdp_data_${new Date().toISOString().split('T')[0]}.csv`;
+        link.click();
+    }
+    
+    function exportToJSON() {
+        const params = new URLSearchParams(window.location.search);
+        params.set('format', 'json');
+        const exportUrl = `/api/export?${params.toString()}`;
+        
+        // Create a temporary link to download the file
+        const link = document.createElement('a');
+        link.href = exportUrl;
+        link.download = `gdp_data_${new Date().toISOString().split('T')[0]}.json`;
+        link.click();
+    }
+    
+    // Auto-submit form on filter change
+    document.addEventListener('DOMContentLoaded', function() {
+        const selects = document.querySelectorAll('.filter-form select');
+        selects.forEach(select => {
+            select.addEventListener('change', function() {
+                // Optional: Auto-submit on change
+                // this.form.submit();
+            });
+        });
+    });
+</script>
+{% endblock %}

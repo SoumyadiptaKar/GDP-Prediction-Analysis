@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block title %}Application Logs - Debug{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-file-alt me-2"></i>Application Logs
+                    <span class="badge bg-warning ms-2">Debug Mode Only</span>
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Debug Information:</strong> This page shows the last 100 log entries. 
+                    Full logs are available in the <code>logs/</code> directory.
+                </div>
+                
+                <div class="mb-3">
+                    <button class="btn btn-sm btn-outline-primary" onclick="refreshLogs()">
+                        <i class="fas fa-sync-alt me-1"></i>Refresh
+                    </button>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="clearDisplay()">
+                        <i class="fas fa-eraser me-1"></i>Clear Display
+                    </button>
+                    <button class="btn btn-sm btn-outline-info" onclick="toggleAutoRefresh()">
+                        <i class="fas fa-play me-1"></i>Auto Refresh
+                    </button>
+                </div>
+                
+                <div class="log-container" id="logContainer">
+                    <pre class="log-output" id="logOutput">{% for line in logs %}{{ line }}{% endfor %}</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.log-container {
+    background-color: #1e1e1e;
+    border-radius: 5px;
+    padding: 15px;
+    max-height: 600px;
+    overflow-y: auto;
+    font-family: 'Courier New', monospace;
+}
+
+.log-output {
+    color: #f8f8f2;
+    margin: 0;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+/* Log level colors */
+.log-output:contains("ERROR") {
+    color: #ff6b6b;
+}
+
+.log-output:contains("WARNING") {
+    color: #ffd93d;
+}
+
+.log-output:contains("INFO") {
+    color: #6bcf7f;
+}
+
+.log-output:contains("DEBUG") {
+    color: #74c0fc;
+}
+</style>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+let autoRefreshInterval = null;
+let isAutoRefresh = false;
+
+function refreshLogs() {
+    fetch('/logs')
+        .then(response => response.text())
+        .then(html => {
+            // Extract the log content from the response
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const newLogContent = doc.getElementById('logOutput');
+            
+            if (newLogContent) {
+                document.getElementById('logOutput').innerHTML = newLogContent.innerHTML;
+                // Scroll to bottom
+                const container = document.getElementById('logContainer');
+                container.scrollTop = container.scrollHeight;
+            }
+        })
+        .catch(error => {
+            console.error('Error refreshing logs:', error);
+            GDPAnalytics.showAlert('Error refreshing logs', 'error');
+        });
+}
+
+function clearDisplay() {
+    document.getElementById('logOutput').innerHTML = '';
+}
+
+function toggleAutoRefresh() {
+    const button = event.target;
+    
+    if (isAutoRefresh) {
+        // Stop auto refresh
+        clearInterval(autoRefreshInterval);
+        isAutoRefresh = false;
+        button.innerHTML = '<i class="fas fa-play me-1"></i>Auto Refresh';
+        button.classList.remove('btn-outline-danger');
+        button.classList.add('btn-outline-info');
+    } else {
+        // Start auto refresh
+        autoRefreshInterval = setInterval(refreshLogs, 3000); // Refresh every 3 seconds
+        isAutoRefresh = true;
+        button.innerHTML = '<i class="fas fa-stop me-1"></i>Stop Auto Refresh';
+        button.classList.remove('btn-outline-info');
+        button.classList.add('btn-outline-danger');
+    }
+}
+
+// Auto-scroll to bottom on page load
+document.addEventListener('DOMContentLoaded', function() {
+    const container = document.getElementById('logContainer');
+    container.scrollTop = container.scrollHeight;
+});
+
+// Clean up on page unload
+window.addEventListener('beforeunload', function() {
+    if (autoRefreshInterval) {
+        clearInterval(autoRefreshInterval);
+    }
+});
+</script>
+{% endblock %}

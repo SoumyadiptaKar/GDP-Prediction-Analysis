@@ -1,0 +1,230 @@
+{% extends "base.html" %}
+
+{% block title %}Visualizations - GDP Analytics{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="display-5 mb-4">
+            <i class="fas fa-chart-bar me-3"></i>Data Visualizations
+        </h1>
+        <p class="lead text-muted">Interactive charts and graphs for economic data analysis</p>
+    </div>
+</div>
+
+<!-- Chart Controls -->
+<div class="row">
+    <div class="col-12">
+        <div class="viz-controls">
+            <h5><i class="fas fa-sliders-h me-2"></i>Chart Controls</h5>
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <label for="chart-type" class="form-label">Chart Type</label>
+                    <select class="form-select" id="chart-type">
+                        <option value="bar">Bar Chart</option>
+                        <option value="line">Line Chart</option>
+                        <option value="scatter">Scatter Plot</option>
+                        <option value="histogram">Histogram</option>
+                    </select>
+                </div>
+                
+                <div class="col-md-3 mb-3">
+                    <label for="chart-metric" class="form-label">Social Indicator</label>
+                    <select class="form-select" id="chart-metric">
+                        <optgroup label="Economic Indicators">
+                            <option value="gdp">GDP per Capita (USD)</option>
+                            <option value="population">Total Population</option>
+                        </optgroup>
+                        <optgroup label="Health & Demographics">
+                            <option value="life_expectancy">Life Expectancy (Years)</option>
+                            <option value="infant_mortality">Infant Mortality Rate</option>
+                            <option value="female">Female Population (%)</option>
+                            <option value="male">Male Population (%)</option>
+                        </optgroup>
+                        <optgroup label="Technology & Development">
+                            <option value="internet">Internet Penetration (%)</option>
+                            <option value="hci">Human Capital Index</option>
+                            <option value="enrollment">School Enrollment (%)</option>
+                            <option value="urban_pop">Urban Population (%)</option>
+                        </optgroup>
+                        <optgroup label="Migration">
+                            <option value="migration">Net Migration</option>
+                        </optgroup>
+                    </select>
+                </div>
+                
+                <div class="col-md-3 mb-3">
+                    <label for="chart-year" class="form-label">Data Year</label>
+                    <select class="form-select" id="chart-year">
+                        <option value="2023">2023 (Latest)</option>
+                        <option value="2022">2022</option>
+                        <option value="2021">2021</option>
+                        <option value="2020">2020</option>
+                        <option value="2019">2019</option>
+                        <option value="2018">2018</option>
+                        <option value="2015">2015</option>
+                        <option value="2010">2010</option>
+                    </select>
+                </div>
+                
+                <div class="col-md-3 mb-3 d-flex align-items-end">
+                    <button class="btn btn-primary me-2" onclick="updateChart()">
+                        <i class="fas fa-chart-bar me-1"></i>Generate Chart
+                    </button>
+                    <button class="btn btn-outline-info" onclick="exportChart('main-chart')">
+                        <i class="fas fa-download me-1"></i>Export PNG
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Interactive Chart -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-chart-bar me-2"></i>
+                    <span id="chart-title">Top 10 Countries by GDP per Capita (2023)</span>
+                </h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="chart-container-main" id="main-chart" data-chart="bar" style="height: 500px;">
+                    <!-- Chart will load here directly -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart Information -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-info-circle me-2"></i>Chart Information
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h6><i class="fas fa-info-circle text-primary me-2"></i>About This Visualization:</h6>
+                        <p class="text-muted small">
+                            Interactive charts showing social and economic indicators across 250+ countries. 
+                            Select different indicators and years to explore patterns and compare countries.
+                        </p>
+                    </div>
+                    <div class="col-md-4">
+                        <h6><i class="fas fa-mouse-pointer text-success me-2"></i>Interactive Features:</h6>
+                        <ul class="list-unstyled small">
+                            <li><i class="fas fa-hand-pointer text-primary me-1"></i>Hover for detailed values</li>
+                            <li><i class="fas fa-search-plus text-success me-1"></i>Zoom and pan capabilities</li>
+                            <li><i class="fas fa-download text-info me-1"></i>Export as high-quality PNG</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        <h6><i class="fas fa-database text-warning me-2"></i>Data Coverage:</h6>
+                        <ul class="list-unstyled small">
+                            <li><i class="fas fa-globe text-primary me-1"></i>250+ countries worldwide</li>
+                            <li><i class="fas fa-calendar text-success me-1"></i>Data from 1960-2023</li>
+                            <li><i class="fas fa-chart-line text-info me-1"></i>12 social indicators</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Chart management functions
+    function updateChart() {
+        const chartType = document.getElementById('chart-type').value;
+        const metric = document.getElementById('chart-metric').value;
+        const year = document.getElementById('chart-year').value;
+        
+        // Update chart title
+        updateChartTitle(metric, year, chartType);
+        
+        // Update main chart with parameters
+        const params = { metric: metric, year: year, limit: 10 };
+        loadChartWithParams('main-chart', chartType, params);
+        
+        // Show success message
+        showAlert('Chart updated successfully!', 'success');
+    }
+    
+    function updateChartTitle(metric, year, chartType) {
+        const metricLabels = {
+            'gdp': 'GDP per Capita',
+            'population': 'Total Population',
+            'life_expectancy': 'Life Expectancy',
+            'infant_mortality': 'Infant Mortality Rate',
+            'female': 'Female Population',
+            'male': 'Male Population',
+            'internet': 'Internet Penetration',
+            'hci': 'Human Capital Index',
+            'enrollment': 'School Enrollment',
+            'urban_pop': 'Urban Population',
+            'migration': 'Net Migration'
+        };
+        
+        const chartTypeLabels = {
+            'bar': 'Top 10 Countries by',
+            'line': 'Trend Analysis for',
+            'scatter': 'Correlation Analysis for',
+            'histogram': 'Distribution of'
+        };
+        
+        const title = `${chartTypeLabels[chartType] || 'Chart for'} ${metricLabels[metric] || metric} (${year})`;
+        document.getElementById('chart-title').textContent = title;
+    }
+    
+    function loadChartWithParams(containerId, chartType, params) {
+        // Load chart with parameters directly
+        loadChart('main-chart', chartType, null, params);
+    }
+    
+    function showAlert(message, type) {
+        // Simple alert function
+        const alertClass = type === 'success' ? 'alert-success' : 'alert-info';
+        const alertHtml = `
+            <div class="alert ${alertClass} alert-dismissible fade show position-fixed" 
+                 style="top: 20px; right: 20px; z-index: 1050;" role="alert">
+                <i class="fas fa-check-circle me-2"></i>${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        `;
+        
+        // Remove existing alerts
+        document.querySelectorAll('.alert').forEach(alert => alert.remove());
+        
+        // Add new alert
+        document.body.insertAdjacentHTML('beforeend', alertHtml);
+        
+        // Auto-remove after 3 seconds
+        setTimeout(() => {
+            document.querySelector('.alert')?.remove();
+        }, 3000);
+    }
+    
+    // Initialize charts when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        // Load default chart with initial parameters
+        setTimeout(() => {
+            const defaultParams = { metric: 'gdp', year: 2023, limit: 10 };
+            loadChartWithParams('main-chart', 'bar', defaultParams);
+        }, 500);
+        
+        // Add event listeners for real-time updates
+        document.getElementById('chart-type').addEventListener('change', updateChart);
+        document.getElementById('chart-metric').addEventListener('change', updateChart);
+        document.getElementById('chart-year').addEventListener('change', updateChart);
+    });
+</script>
+{% endblock %}

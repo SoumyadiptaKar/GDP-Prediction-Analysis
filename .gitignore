@@ -1,0 +1,94 @@
+# Files and directories to exclude from GitHub
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environment
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.conda/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs (exclude log files but keep the logs directory structure)
+logs/*.log
+logs/*.txt
+
+# Environment files (keep templates, exclude actual secrets)
+.env
+.env.local
+.env.production.local
+
+# Temporary files
+*.tmp
+*.temp
+
+# Database files (you might want to include your sample database)
+# Uncomment the line below if you want to exclude your database
+# database/*.db
+
+# Generated charts/images that can be recreated
+static/experiment_charts/*.png
+static/experiment_charts/*.jpg
+
+# Flask session files
+flask_session/
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
+
+# PyCharm
+.idea/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pytest
+.pytest_cache/
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json

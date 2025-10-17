@@ -1,0 +1,314 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - GDP Analytics{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="display-4">GDP Analytics Dashboard</h1>
+                <p class="lead text-muted">Explore global economic data, trends, and insights</p>
+            </div>
+            <div class="text-end">
+                <img src="https://via.placeholder.com/120x80/007bff/ffffff?text=GDP" alt="GDP Analytics" class="img-fluid rounded">
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if stats %}
+<!-- Summary Statistics Cards -->
+<div class="row mb-5">
+    <div class="col-md-3 mb-3">
+        <div class="card bg-primary text-white h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5 class="card-title">Countries</h5>
+                        <h2 class="card-text">{{ stats.total_countries }}</h2>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-globe fa-2x opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <div class="card bg-success text-white h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5 class="card-title">Data Records</h5>
+                        <h2 class="card-text">{{ "{:,}".format(stats.total_records) }}</h2>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-database fa-2x opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <div class="card bg-warning text-white h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5 class="card-title">Year Range</h5>
+                        <h2 class="card-text">{{ stats.year_range.min_year }} - {{ stats.year_range.max_year }}</h2>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-calendar-alt fa-2x opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <div class="card bg-info text-white h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5 class="card-title">Coverage</h5>
+                        <h2 class="card-text">{{ stats.year_range.total_years }} Years</h2>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-chart-line fa-2x opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Quick Actions -->
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-rocket me-2"></i>Quick Actions
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <a href="{{ url_for('data_explorer') }}" class="btn btn-outline-primary w-100 h-100 d-flex flex-column justify-content-center">
+                            <i class="fas fa-search fa-2x mb-2"></i>
+                            <strong>Explore Data</strong>
+                            <small>Browse and filter economic data</small>
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{{ url_for('visualizations') }}" class="btn btn-outline-success w-100 h-100 d-flex flex-column justify-content-center">
+                            <i class="fas fa-chart-bar fa-2x mb-2"></i>
+                            <strong>View Charts</strong>
+                            <small>Interactive data visualizations</small>
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{{ url_for('ml_models') }}" class="btn btn-outline-warning w-100 h-100 d-flex flex-column justify-content-center">
+                            <i class="fas fa-brain fa-2x mb-2"></i>
+                            <strong>ML Models</strong>
+                            <small>Predict GDP trends</small>
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{{ url_for('country_profile', country_code='US') }}" class="btn btn-outline-info w-100 h-100 d-flex flex-column justify-content-center">
+                            <i class="fas fa-flag fa-2x mb-2"></i>
+                            <strong>Country Profiles</strong>
+                            <small>Detailed country analysis</small>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Featured Content -->
+<div class="row">
+    <!-- Top GDP Countries -->
+    <div class="col-lg-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-trophy me-2"></i>Top GDP Countries (Latest Year)
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if top_gdp %}
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Rank</th>
+                                    <th>Country</th>
+                                    <th>GDP (Billion USD)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for country in top_gdp %}
+                                <tr>
+                                    <td>{{ loop.index }}</td>
+                                    <td>
+                                        <a href="{{ url_for('country_profile', country_code=country.country_code) }}" 
+                                           class="text-decoration-none">
+                                            {{ country.name }}
+                                        </a>
+                                    </td>
+                                    <td>{{ "{:,.1f}".format(country.gdp / 1000) }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted">No data available</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Features Overview -->
+    <div class="col-lg-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-star me-2"></i>Platform Features
+                </h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled">
+                    <li class="mb-3">
+                        <i class="fas fa-check-circle text-success me-2"></i>
+                        <strong>Comprehensive Data:</strong> Economic indicators from 250+ countries
+                    </li>
+                    <li class="mb-3">
+                        <i class="fas fa-check-circle text-success me-2"></i>
+                        <strong>Interactive Charts:</strong> Plotly-powered visualizations
+                    </li>
+                    <li class="mb-3">
+                        <i class="fas fa-check-circle text-success me-2"></i>
+                        <strong>Machine Learning:</strong> GDP prediction models
+                    </li>
+                    <li class="mb-3">
+                        <i class="fas fa-check-circle text-success me-2"></i>
+                        <strong>Data Export:</strong> Download data in CSV format
+                    </li>
+                    <li class="mb-3">
+                        <i class="fas fa-check-circle text-success me-2"></i>
+                        <strong>Responsive Design:</strong> Works on all devices
+                    </li>
+                    <li class="mb-0">
+                        <i class="fas fa-check-circle text-success me-2"></i>
+                        <strong>Real-time Analytics:</strong> Up-to-date insights
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Project Information -->
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="card bg-gradient" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+            <div class="card-body text-white">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h4 class="card-title mb-3">
+                            <i class="fas fa-graduation-cap me-2"></i>
+                            University of Helsinki Research Project
+                        </h4>
+                        <p class="lead mb-3">
+                            This comprehensive GDP Analytics Platform was developed as part of an academic research project 
+                            at the University of Helsinki, showcasing advanced data analysis, machine learning, and web development techniques.
+                        </p>
+                        <div class="row">
+                            <div class="col-sm-6 mb-2">
+                                <i class="fas fa-check-circle me-2"></i>Real-time data visualization
+                            </div>
+                            <div class="col-sm-6 mb-2">
+                                <i class="fas fa-check-circle me-2"></i>Machine learning predictions
+                            </div>
+                            <div class="col-sm-6 mb-2">
+                                <i class="fas fa-check-circle me-2"></i>Interactive exploration tools
+                            </div>
+                            <div class="col-sm-6 mb-2">
+                                <i class="fas fa-check-circle me-2"></i>Academic research standards
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <img src="{{ url_for('static', filename='images/helsinki-uni-logo.png') }}" 
+                             alt="University of Helsinki" 
+                             class="img-fluid"
+                             style="max-height: 120px; filter: brightness(0) invert(1);">
+                        <h6 class="mt-3 mb-0">Data Science & Economics</h6>
+                        <small class="opacity-75">Research Excellence</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Getting Started -->
+<div class="row">
+    <div class="col-12">
+        <div class="card bg-light">
+            <div class="card-body text-center">
+                <h4><i class="fas fa-lightbulb me-2"></i>Getting Started</h4>
+                <p class="mb-3">New to GDP Analytics? Here's how to get the most out of the platform:</p>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <div class="d-flex flex-column align-items-center">
+                            <div class="bg-primary text-white rounded-circle d-flex justify-content-center align-items-center mb-2" style="width: 50px; height: 50px;">
+                                <span class="fw-bold">1</span>
+                            </div>
+                            <h6>Explore the Data</h6>
+                            <p class="small text-muted">Start by browsing countries and economic indicators</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="d-flex flex-column align-items-center">
+                            <div class="bg-success text-white rounded-circle d-flex justify-content-center align-items-center mb-2" style="width: 50px; height: 50px;">
+                                <span class="fw-bold">2</span>
+                            </div>
+                            <h6>Create Visualizations</h6>
+                            <p class="small text-muted">Generate interactive charts and discover trends</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="d-flex flex-column align-items-center">
+                            <div class="bg-warning text-white rounded-circle d-flex justify-content-center align-items-center mb-2" style="width: 50px; height: 50px;">
+                                <span class="fw-bold">3</span>
+                            </div>
+                            <h6>Make Predictions</h6>
+                            <p class="small text-muted">Use ML models to forecast economic indicators</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Add any dashboard-specific JavaScript here
+    console.log('GDP Analytics Dashboard loaded');
+    
+    // Example: Load a simple chart when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        // You can add chart initialization here later
+    });
+</script>
+{% endblock %}
