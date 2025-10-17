@@ -27,8 +27,16 @@ class GDPDatabaseCRUD:
         
         self.sqlite_available = self._check_sqlite_cli()
         if not self.sqlite_available:
-            self.logger.error("SQLite CLI not available")
-            raise Exception("SQLite CLI not available. Please install SQLite.")
+            self.logger.warning("SQLite CLI not available, using Python sqlite3 module instead")
+        
+        # Test database connection using Python sqlite3
+        try:
+            test_conn = sqlite3.connect(self.db_path)
+            test_conn.close()
+            self.logger.info("Database connection test successful")
+        except Exception as e:
+            self.logger.error(f"Database connection test failed: {e}")
+            raise Exception(f"Database connection failed: {e}")
         
         self.logger.info("Database CRUD initialized successfully")
     
@@ -43,6 +51,13 @@ class GDPDatabaseCRUD:
             return False
     
     def _execute_query(self, query: str, output_format: str = "csv") -> Optional[str]:
+        """Execute a SQL query using sqlite3 CLI or Python sqlite3 module."""
+        if self.sqlite_available:
+            return self._execute_query_cli(query, output_format)
+        else:
+            return self._execute_query_python(query, output_format)
+    
+    def _execute_query_cli(self, query: str, output_format: str = "csv") -> Optional[str]:
         """Execute a SQL query using sqlite3 CLI."""
         try:
             cmd = ['sqlite3', self.db_path]
@@ -76,6 +91,51 @@ class GDPDatabaseCRUD:
             self.logger.error(f"Error executing query: {e}")
             log_exception(e, "Error executing SQLite query")
             print(f"Error executing query: {e}")
+            return None
+    
+    def _execute_query_python(self, query: str, output_format: str = "csv") -> Optional[str]:
+        """Execute a SQL query using Python sqlite3 module."""
+        try:
+            self.logger.debug(f"Executing query via Python sqlite3: {query[:100]}{'...' if len(query) > 100 else ''}")
+            
+            conn = sqlite3.connect(self.db_path)
+            cursor = conn.cursor()
+            cursor.execute(query)
+            
+            # Get column names
+            columns = [description[0] for description in cursor.description] if cursor.description else []
+            rows = cursor.fetchall()
+            
+            conn.close()
+            
+            if output_format == "csv":
+                import io
+                output = io.StringIO()
+                # Write headers
+                if columns:
+                    output.write(','.join(columns) + '\n')
+                # Write rows
+                for row in rows:
+                    output.write(','.join(str(cell) if cell is not None else '' for cell in row) + '\n')
+                result = output.getvalue().strip()
+                output.close()
+                return result
+            elif output_format == "json":
+                import json
+                result_list = [dict(zip(columns, row)) for row in rows]
+                return json.dumps(result_list)
+            else:  # table format or default
+                # Simple table format
+                if not columns:
+                    return ""
+                result_lines = ['\t'.join(columns)]
+                for row in rows:
+                    result_lines.append('\t'.join(str(cell) if cell is not None else '' for cell in row))
+                return '\n'.join(result_lines)
+            
+        except Exception as e:
+            self.logger.error(f"Error executing query with Python sqlite3: {e}")
+            log_exception(e, "Error executing SQLite query with Python module")
             return None
     
     def _query_to_dataframe(self, query: str) -> pd.DataFrame:

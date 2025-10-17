@@ -18,7 +18,21 @@ ModuleNotFoundError: No module named 'sklearn'
   - scipy (for scientific computing)
   - lightgbm (for advanced ML models)
 
-### 2. Build Configuration
+### 2. SQLite CLI Not Available Error
+
+**Problem**: Your app fails to start with errors like:
+
+```
+SQLite CLI not available. Please install SQLite.
+```
+
+**Solution**:
+
+- The code has been updated to use Python's built-in sqlite3 module as fallback
+- No additional installation needed - Python includes SQLite support
+- The app will automatically detect and use the best available method
+
+### 3. Build Configuration
 
 **Render Settings You Need**:
 
@@ -26,14 +40,14 @@ ModuleNotFoundError: No module named 'sklearn'
 - **Start Command**: `gunicorn wsgi:app`
 - **Environment**: `Python 3.11` (or latest)
 
-### 3. Environment Variables
+### 4. Environment Variables
 
 Set these in Render dashboard:
 
 - `FLASK_ENV=production`
 - `PYTHON_VERSION=3.11.0` (if needed)
 
-### 4. File Structure Check
+### 5. File Structure Check
 
 Make sure these files exist in your repository root:
 
@@ -42,7 +56,7 @@ Make sure these files exist in your repository root:
 - `app.py` ✓
 - All your other application files
 
-### 5. Quick Deployment Steps
+### 6. Quick Deployment Steps
 
 1. **Push Updated Code to GitHub**:
 
@@ -62,7 +76,7 @@ Make sure these files exist in your repository root:
    - Watch the build and deploy logs in Render dashboard
    - Look for successful installation of all packages
 
-### 6. Expected Successful Deploy Log
+### 7. Expected Successful Deploy Log
 
 You should see something like:
 
@@ -73,9 +87,10 @@ Successfully installed Flask-2.3.3 pandas-2.1.1 scikit-learn-1.3.0 ...
 [INFO] Listening at: http://0.0.0.0:10000
 [INFO] Using worker: sync
 [INFO] Booting worker with pid: 7
+Database connection test successful
 ```
 
-### 7. Alternative Quick Fix
+### 8. Alternative Quick Fix
 
 If you still have issues, try this minimal requirements-production.txt:
 
