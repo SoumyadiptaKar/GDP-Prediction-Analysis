@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+
+{% block title %}About - GDP Analytics{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h2><i class="fas fa-users me-2"></i>About the Team</h2>
+                <p class="text-muted">Meet the developers behind this GDP Analytics Platform</p>
+            </div>
+            <div class="d-flex align-items-center">
+                <img src="{{ url_for('static', filename='images/helsinki-uni-logo.png') }}" 
+                     alt="University of Helsinki" 
+                     class="img-fluid"
+                     style="max-height: 50px;">
+                <span class="ms-2 fw-bold">University of Helsinki</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Team Members -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title mb-4">
+                    <i class="fas fa-code me-2"></i>Development Team
+                </h4>
+                
+                <div class="row">
+                    <!-- Team Member 1: Soumyadipta Kar -->
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-body text-center">
+                                <div class="mb-3">
+                                    <div class="bg-primary text-white rounded-circle mx-auto d-flex align-items-center justify-content-center" 
+                                         style="width: 80px; height: 80px; font-size: 2rem;">
+                                        <i class="fab fa-github"></i>
+                                    </div>
+                                </div>
+                                <h5 class="card-title">Soumyadipta Kar</h5>
+                                <p class="text-muted mb-3">Lead Developer & Data Scientist</p>
+                                <p class="small text-muted mb-3">
+                                    Specialized in full-stack development, machine learning implementations, 
+                                    and database architecture for economic data analysis.
+                                </p>
+                                <a href="https://github.com/SoumyadiptaKar" 
+                                   target="_blank" 
+                                   class="btn btn-outline-primary btn-sm">
+                                    <i class="fab fa-github me-1"></i>GitHub Profile
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Team Member 2: Tuomas Vuontisjärvi -->
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-body text-center">
+                                <div class="mb-3">
+                                    <div class="bg-success text-white rounded-circle mx-auto d-flex align-items-center justify-content-center" 
+                                         style="width: 80px; height: 80px; font-size: 2rem;">
+                                        <i class="fab fa-github"></i>
+                                    </div>
+                                </div>
+                                <h5 class="card-title">Tuomas Vuontisjärvi</h5>
+                                <p class="text-muted mb-3">Backend Developer & Analytics Engineer</p>
+                                <p class="small text-muted mb-3">
+                                    Focused on backend infrastructure, API development, 
+                                    and advanced data processing algorithms.
+                                </p>
+                                <a href="https://github.com/tuomascode" 
+                                   target="_blank" 
+                                   class="btn btn-outline-success btn-sm">
+                                    <i class="fab fa-github me-1"></i>GitHub Profile
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Team Member 3: Tomasz Gebarski -->
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-body text-center">
+                                <div class="mb-3">
+                                    <div class="bg-info text-white rounded-circle mx-auto d-flex align-items-center justify-content-center" 
+                                         style="width: 80px; height: 80px; font-size: 2rem;">
+                                        <i class="fab fa-github"></i>
+                                    </div>
+                                </div>
+                                <h5 class="card-title">Tomasz Gebarski</h5>
+                                <p class="text-muted mb-3">Frontend Developer & UX Designer</p>
+                                <p class="small text-muted mb-3">
+                                    Specialized in user interface design, data visualization, 
+                                    and creating intuitive user experiences.
+                                </p>
+                                <a href="https://github.com/Tech-TTGames" 
+                                   target="_blank" 
+                                   class="btn btn-outline-info btn-sm">
+                                    <i class="fab fa-github me-1"></i>GitHub Profile
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Project Information -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card bg-light">
+            <div class="card-body">
+                <h4 class="card-title">
+                    <i class="fas fa-info-circle me-2"></i>About the Project
+                </h4>
+                <div class="row">
+                    <div class="col-md-8">
+                        <p class="mb-3">
+                            This GDP Analytics Platform is a comprehensive web application developed as part of 
+                            academic coursework at the University of Helsinki. The project demonstrates advanced 
+                            data science, machine learning, and web development techniques applied to economic data analysis.
+                        </p>
+                        <p class="mb-3">
+                            The platform provides interactive visualizations, machine learning predictions, and 
+                            comprehensive analysis tools for exploring global economic indicators and their relationships.
+                        </p>
+                    </div>
+                    <div class="col-md-4">
+                        <h6 class="fw-bold">Technologies Used:</h6>
+                        <ul class="list-unstyled small">
+                            <li><i class="fab fa-python me-2"></i>Python (Flask, Pandas, Scikit-learn)</li>
+                            <li><i class="fab fa-js me-2"></i>JavaScript (Plotly.js, Bootstrap)</li>
+                            <li><i class="fas fa-database me-2"></i>SQLite Database</li>
+                            <li><i class="fas fa-chart-line me-2"></i>Interactive Data Visualization</li>
+                            <li><i class="fas fa-brain me-2"></i>Machine Learning Models</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Contact Section -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card border-primary">
+            <div class="card-body text-center">
+                <h5 class="card-title text-primary">
+                    <i class="fas fa-envelope me-2"></i>Get in Touch
+                </h5>
+                <p class="card-text">
+                    Interested in our work or have questions about the platform? 
+                    Feel free to reach out to any of our team members through their GitHub profiles.
+                </p>
+                <div class="d-flex justify-content-center gap-3 flex-wrap">
+                    <a href="https://github.com/SoumyadiptaKar" 
+                       target="_blank" 
+                       class="btn btn-primary btn-sm">
+                        <i class="fab fa-github me-1"></i>Soumyadipta
+                    </a>
+                    <a href="https://github.com/tuomascode" 
+                       target="_blank" 
+                       class="btn btn-success btn-sm">
+                        <i class="fab fa-github me-1"></i>Tuomas
+                    </a>
+                    <a href="https://github.com/Tech-TTGames" 
+                       target="_blank" 
+                       class="btn btn-info btn-sm">
+                        <i class="fab fa-github me-1"></i>Tomasz
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Add any JavaScript for the about page if needed
+    console.log('About page loaded successfully');
+</script>
+{% endblock %}

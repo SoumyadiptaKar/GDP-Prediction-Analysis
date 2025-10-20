@@ -337,7 +337,16 @@ async function fetchChartData(chartType, params = {}) {
         let url = `/api/chart-data/${chartType}`;
         
         // Add query parameters
-        const queryParams = new URLSearchParams(params);
+        const queryParams = new URLSearchParams();
+        for (const [key, value] of Object.entries(params)) {
+            if (Array.isArray(value)) {
+                // Handle arrays by adding multiple parameters with the same name
+                value.forEach(item => queryParams.append(key, item));
+            } else {
+                queryParams.append(key, value);
+            }
+        }
+        
         if (queryParams.toString()) {
             url += `?${queryParams.toString()}`;
         }

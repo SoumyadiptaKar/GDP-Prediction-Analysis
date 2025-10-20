@@ -152,7 +152,14 @@
         updateChartTitle(metric, year, chartType);
         
         // Update main chart with parameters
-        const params = { metric: metric, year: year, limit: 10 };
+        let params;
+        if (chartType === 'scatter') {
+            // For scatter plots, we need metrics (plural) for correlation analysis
+            params = { metrics: ['gdp', 'life_expectancy'], year: year };
+        } else {
+            params = { metric: metric, year: year, limit: 10 };
+        }
+        
         loadChartWithParams('main-chart', chartType, params);
         
         // Show success message

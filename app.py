@@ -238,6 +238,12 @@ def create_app(config_name=None):
             flash('Error loading blog page', 'error')
             return redirect(url_for('index'))
     
+    @app.route('/about')
+    def about():
+        """About page with team information."""
+        app.logger.info("Loading about page")
+        return render_template('about.html')
+    
     @app.route('/country/<country_code>')
     def country_profile(country_code):
         """Individual country profile page."""
@@ -339,9 +345,29 @@ def create_app(config_name=None):
                 if not metrics:
                     metrics = ['gdp', 'life_expectancy']
                 data = app.db.get_correlation_data(metrics, year)
+                
+                # Clean the data to remove any NaN or null values
+                data = data.dropna()
+                
+                # Convert to records and ensure no NaN values in the result
                 result = data.to_dict('records')
-                logger.info(f"Returning {len(result)} records for correlation chart")
-                return jsonify(result)
+                
+                # Additional safety check to remove any remaining NaN values
+                import math
+                cleaned_result = []
+                for record in result:
+                    cleaned_record = {}
+                    valid_record = True
+                    for key, value in record.items():
+                        if pd.isna(value) or (isinstance(value, float) and math.isnan(value)):
+                            valid_record = False
+                            break
+                        cleaned_record[key] = value
+                    if valid_record:
+                        cleaned_result.append(cleaned_record)
+                
+                logger.info(f"Returning {len(cleaned_result)} records for correlation chart")
+                return jsonify(cleaned_result)
             
             elif chart_type == 'histogram':
                 # Generate histogram data for a specific metric

@@ -329,8 +329,11 @@ class GDPDatabaseCRUD:
         metrics_str = ", ".join(metrics)
         query = f"SELECT country_code, {metrics_str} FROM data WHERE "
         
+        # Add condition for valid country code
+        conditions = ["country_code IS NOT NULL AND country_code != ''"]
+        
         # Add conditions to ensure all metrics have valid data
-        conditions = [f"{metric} IS NOT NULL AND {metric} > 0" for metric in metrics]
+        conditions.extend([f"{metric} IS NOT NULL AND {metric} > 0" for metric in metrics])
         query += " AND ".join(conditions)
         
         if year:
