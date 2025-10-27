@@ -163,6 +163,19 @@ class GDPDatabaseCRUD:
         query = "SELECT * FROM countries ORDER BY name;"
         return self._query_to_dataframe(query)
     
+    def get_countries_with_gdp_data(self) -> pd.DataFrame:
+        """Get only countries that have GDP data available for modeling."""
+        query = """
+        SELECT DISTINCT c.country_code, c.name
+        FROM countries c
+        INNER JOIN data d ON c.country_code = d.country_code
+        WHERE d.gdp IS NOT NULL
+        GROUP BY c.country_code, c.name
+        HAVING COUNT(*) >= 5
+        ORDER BY c.name;
+        """
+        return self._query_to_dataframe(query)
+    
     def get_country_by_code(self, country_code: str) -> pd.DataFrame:
         """Get specific country by country code."""
         query = f"SELECT * FROM countries WHERE country_code = '{country_code}';"

@@ -18,6 +18,18 @@ parts/
 sdist/
 var/
 wheels/
+
+# Development and temporary files
+*_SUMMARY.md
+*_UPDATE.md
+*_FIX.md
+*_IMPLEMENTATION.md
+*_GUIDE.md
+*_TROUBLESHOOTING.md
+test_*.py
+simple_test.py
+todo_list.txt
+issue_*.md
 share/python-wheels/
 *.egg-info/
 .installed.cfg

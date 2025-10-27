@@ -6,7 +6,7 @@ A comprehensive web application for analyzing global economic and social indicat
 
 ### **Features**
 
-- 📊 **Interactive Data Explorer** - Browse 12 social indicators across 250+ countries
+- 📊 **Interactive Data Explorer** - Browse 12 social indicators across 154 countries
 - 📈 **Dynamic Visualizations** - Real-time charts with filtering capabilities
 - 🗺️ **Geographic Analysis** - Blog with interactive maps and research insights
 - 🤖 **ML Model Experimentation** - Compare different prediction models
@@ -15,7 +15,7 @@ A comprehensive web application for analyzing global economic and social indicat
 
 ### **Data Coverage**
 
-- **250+ Countries** worldwide
+- **154 Countries** worldwide
 - **12 Social Indicators**: GDP, Population, Life Expectancy, Internet Penetration, Human Capital Index, and more
 - **Time Period**: 1960-2023 (60+ years of historical data)
 - **8,398 Data Records** with comprehensive coverage

@@ -95,7 +95,7 @@
                 </h5>
             </div>
             <div class="card-body">
-                <p class="text-muted mb-3">This dataset contains 12 comprehensive social and economic indicators spanning 1960-2023 across 250 countries:</p>
+                <p class="text-muted mb-3">This dataset contains 12 comprehensive social and economic indicators spanning 1960-2023 across 154 countries:</p>
                 
                 <div class="row">
                     <div class="col-md-4">
@@ -171,7 +171,7 @@
                             <th data-sort="life_expectancy">Life Exp.</th>
                             <th data-sort="infant_mortality">Infant Mort.</th>
                             <th data-sort="internet">Internet %</th>
-                            <th data-sort="enrollment">Education %</th>
+                            <th data-sort="enrollment">Education</th>
                             <th data-sort="hci">HCI</th>
                             <th data-sort="urban_pop">Urban %</th>
                             <th data-sort="migration">Migration</th>
@@ -224,7 +224,7 @@
                             </td>
                             <td>
                                 {% if row.enrollment %}
-                                    {{ "{:.1f}".format(row.enrollment * 100) }}%
+                                    {{ "{:.3f}".format(row.enrollment) }}
                                 {% else %}
                                     <span class="text-muted">N/A</span>
                                 {% endif %}
@@ -238,7 +238,7 @@
                             </td>
                             <td>
                                 {% if row.urban_pop %}
-                                    {{ "{:.1f}".format(row.urban_pop) }}%
+                                    {{ "{:.1f}".format(row.urban_pop) }}
                                 {% else %}
                                     <span class="text-muted">N/A</span>
                                 {% endif %}
@@ -252,14 +252,14 @@
                             </td>
                             <td>
                                 {% if row.female %}
-                                    {{ "{:.1f}".format(row.female) }}%
+                                    {{ "{:.1f}".format(row.female) }}
                                 {% else %}
                                     <span class="text-muted">N/A</span>
                                 {% endif %}
                             </td>
                             <td>
                                 {% if row.male %}
-                                    {{ "{:.1f}".format(row.male) }}%
+                                    {{ "{:.1f}".format(row.male) }}
                                 {% else %}
                                     <span class="text-muted">N/A</span>
                                 {% endif %}

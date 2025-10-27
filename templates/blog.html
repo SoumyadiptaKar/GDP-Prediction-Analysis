@@ -128,12 +128,12 @@
 
     <!-- Research Overview -->
     <div class="research-section">
-        <h2><i class="fas fa-chart-line"></i> Research Overview</h2>
-        <p class="lead">This research project explores the complex relationship between social indicators and economic growth, specifically focusing on GDP prediction using various demographic and health metrics.</p>
+        <h2>GDP per Capita Prediction</h2>
+        <p class="lead">This project aims to predict changes in GDP per capita using social and demographic features.</p>
         
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-value">{{ stats.total_countries }}</div>
+                <div class="stat-value">154</div>
                 <div>Countries Analyzed</div>
             </div>
             <div class="stat-card">
@@ -151,262 +151,46 @@
         </div>
     </div>
 
-    <!-- Research Journey -->
+    <!-- The Aim and Uses -->
     <div class="research-section">
-        <h2><i class="fas fa-route"></i> Our Research Journey</h2>
+        <h2>The Aim and Uses</h2>
         
-        <div class="research-point">
-            <h4>1. Initial Goal: Multi-variable GDP Prediction</h4>
-            <p>We set out to predict GDP using a comprehensive set of social and health indicator data, including life expectancy, education enrollment, internet penetration, urbanization rates, and demographic distributions.</p>
-        </div>
-
-        <div class="research-point">
-            <h4>2. Data Integration Challenges</h4>
-            <p>We initially ran into trouble trying to fit the data together. Especially religious adherence data caused significant problems due to inconsistent reporting standards and missing values across different countries and time periods.</p>
-        </div>
-
-        <div class="research-point">
-            <h4>3. Historical Discontinuities</h4>
-            <p>We encountered problems with historical events where countries split (like Czechoslovakia, Yugoslavia) or joined up (like German reunification). We solved this by removing all those countries to maintain data consistency and avoid artificial trends.</p>
-        </div>
-
-        <div class="research-point">
-            <h4>4. Initial Modeling Investigation</h4>
-            <p>With the preprocessed data, we started investigating how to predict GDP using various machine learning approaches including Multiple Linear Regression (MLR) and Light Gradient Boosting Machine (LGBM).</p>
-        </div>
-
-        <div class="research-point">
-            <h4>5. Unexpected Discovery: Country Code Dominance</h4>
-            <p>It turns out, if the model gets access to either country code or lagging GDP data, it can predict next year's GDP very well. This suggested that country-specific effects dominate short-term predictions.</p>
-        </div>
-
-        <div class="research-point">
-            <h4>6. Surprising Result: Social Indicators as Noise</h4>
-            <p>Counterintuitively, removing all the social indicators made the predictions (with MLR or LGBM) even better when country codes were available. The social indicators were actually adding noise to short-term predictions.</p>
-        </div>
-
-        <div class="research-point">
-            <h4>7. Temporal Aggregation Breakthrough</h4>
-            <p>We shifted our investigation to understand what we can deduce from the data over longer time horizons. We found that we can achieve R² = 0.35 level predictions when we aggregate data (without country code or GDP) into 10-year buckets and predict GDP change over the next 10-20 years using MLR.</p>
-        </div>
-
-        <div class="research-point">
-            <h4>8. Key Insight: Long-term Social Impact</h4>
-            <p>This means that social indicators have real effects on GDP, but these effects take significant time to materialize. Investment in education, healthcare, and infrastructure shows economic returns over decades, not years.</p>
-        </div>
-
-        <div class="research-point">
-            <h4>9. Ongoing Investigation</h4>
-            <p>We are still investigating advanced modeling techniques to see how much better we can make our GDP predictions, exploring ensemble methods, deep learning approaches, and more sophisticated temporal modeling.</p>
-        </div>
+        <p>The aim of this project and website is to provide both policymakers and investors with a rough idea of how different social and demographic factors impact GDP per capita.</p>
+        
+        <p>We collected and analyzed data from 154 countries covering the period 1960–2023. Our dataset includes the following features:</p>
+        
+        <ol>
+            <li>Country name</li>
+            <li>Country alpha-2 code</li>
+            <li>Year</li>
+            <li>Population</li>
+            <li>GDP per capita</li>
+            <li>Life expectancy</li>
+            <li>Net migration</li>
+            <li>Proportion of population using the internet</li>
+            <li>WDI Human Capital Index</li>
+            <li>WDI School Enrollment Index</li>
+            <li>Proportion of urban population</li>
+            <li>Infant mortality rate</li>
+        </ol>
     </div>
 
-    <!-- Interactive Geographic Visualization -->
+    <!-- Results of Analysis -->
     <div class="research-section">
-        <h2><i class="fas fa-globe"></i> Global GDP Distribution</h2>
-        <p>This interactive map shows the global distribution of GDP per capita, with country coordinates and economic indicators. Click on countries to explore detailed information.</p>
+        <h2>Results of Analysis</h2>
         
-        <div id="gdp-map" class="map-container"></div>
+        <p>Our main finding was that changes in these features did affect GDP per capita, but primarily in the long term. This makes intuitive sense — improving school enrollment or human capital should not yield short-term results. We also observed the somewhat obvious fact that, in the short term, the best predictor of GDP per capita is its own previous values.</p>
         
-        <div class="methodology-grid">
-            <div class="methodology-card">
-                <h5><i class="fas fa-chart-area"></i> GDP Distribution</h5>
-                <p>Countries are color-coded by GDP per capita, showing clear patterns of economic development across different regions and continents.</p>
-            </div>
-            <div class="methodology-card">
-                <h5><i class="fas fa-heartbeat"></i> Health Indicators</h5>
-                <p>Life expectancy data reveals strong correlations with economic development, particularly in developed nations.</p>
-            </div>
-            <div class="methodology-card">
-                <h5><i class="fas fa-wifi"></i> Digital Connectivity</h5>
-                <p>Internet penetration rates show the digital divide and its relationship with economic prosperity.</p>
-            </div>
-            <div class="methodology-card">
-                <h5><i class="fas fa-city"></i> Urbanization Patterns</h5>
-                <p>Urban population percentages indicate development patterns and economic transformation processes.</p>
-            </div>
-        </div>
+        <p>This provides two kinds of insights. For policymakers, the key takeaway is that improvements made today can be expected to bear fruit only in the long term. Policy design should therefore adopt a long-term perspective on when to expect changes. Short-term fluctuations in GDP per capita can be quite random and noisy, often driven by external factors such as financial crises or other global events. Chasing short-term improvements also presents the epistemic challenge of disentangling which policies produced which effects amid such randomness.</p>
+        
+        <p>For investors, the insight is straightforward: if you are pursuing long-term investments, you should look for countries that have recently improved in key indicators but have not yet realized corresponding GDP per capita growth. Conversely, investors seeking short-term gains should not rely on these features as predictors of near-term growth.</p>
     </div>
 
-    <!-- Correlation Analysis -->
+    <!-- The Product -->
     <div class="research-section">
-        <h2><i class="fas fa-project-diagram"></i> Social Indicators Correlation Analysis</h2>
-        <p>Our research revealed complex relationships between various social indicators and economic growth. Here's what we discovered:</p>
+        <h2>The Product</h2>
         
-        <div id="correlation-chart" class="correlation-chart"></div>
-        
-        <div class="methodology-grid">
-            <div class="methodology-card">
-                <h5><i class="fas fa-graduation-cap"></i> Education Impact</h5>
-                <p>School enrollment rates show delayed but significant correlation with GDP growth over 10-20 year periods.</p>
-            </div>
-            <div class="methodology-card">
-                <h5><i class="fas fa-baby"></i> Health Outcomes</h5>
-                <p>Infant mortality and life expectancy demonstrate strong predictive power for long-term economic development.</p>
-            </div>
-            <div class="methodology-card">
-                <h5><i class="fas fa-users"></i> Demographic Trends</h5>
-                <p>Population dynamics and migration patterns influence economic growth trajectories significantly.</p>
-            </div>
-            <div class="methodology-card">
-                <h5><i class="fas fa-clock"></i> Temporal Effects</h5>
-                <p>Social investments show economic returns with significant time lags, requiring long-term analytical approaches.</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Methodology and Future Work -->
-    <div class="research-section">
-        <h2><i class="fas fa-cogs"></i> Methodology & Future Research</h2>
-        
-        <h4>Current Approach</h4>
-        <ul>
-            <li><strong>Data Preprocessing:</strong> Cleaned and normalized {{ stats.total_records }} records across {{ stats.total_countries }} countries</li>
-            <li><strong>Temporal Aggregation:</strong> 10-year bucket analysis for capturing long-term trends</li>
-            <li><strong>Model Comparison:</strong> MLR vs LGBM performance analysis</li>
-            <li><strong>Feature Engineering:</strong> Country-code removal to focus on universal indicators</li>
-        </ul>
-        
-        <h4>Key Findings</h4>
-        <ul>
-            <li>Short-term GDP prediction (1-2 years): Country-specific factors dominate (R² > 0.9)</li>
-            <li>Medium-term GDP prediction (5-10 years): Social indicators become relevant</li>
-            <li>Long-term GDP change (10-20 years): Social indicators achieve R² = 0.35 predictive power</li>
-            <li>Social investments require decade-scale evaluation periods</li>
-        </ul>
-        
-        <h4>Future Research Directions</h4>
-        <ul>
-            <li>Ensemble methods combining multiple temporal horizons</li>
-            <li>Deep learning approaches for non-linear relationship modeling</li>
-            <li>Causal inference techniques to establish policy implications</li>
-            <li>Integration of additional data sources (climate, governance, technology)</li>
-        </ul>
-    </div>
-
-    <!-- Conclusions -->
-    <div class="research-section">
-        <h2><i class="fas fa-lightbulb"></i> Research Conclusions</h2>
-        
-        <div class="research-point">
-            <h4>Time Horizon Matters</h4>
-            <p>The relationship between social indicators and GDP is fundamentally temporal. While country-specific factors dominate short-term predictions, social investments drive long-term economic transformation.</p>
-        </div>
-        
-        <div class="research-point">
-            <h4>Policy Implications</h4>
-            <p>Governments should evaluate social policies (education, healthcare, infrastructure) on decade-scale timelines rather than electoral cycles to capture their true economic impact.</p>
-        </div>
-        
-        <div class="research-point">
-            <h4>Methodological Innovation</h4>
-            <p>Our temporal aggregation approach reveals patterns invisible in traditional annual analysis, suggesting new frameworks for economic development research.</p>
-        </div>
+        <p>We offer a website built around our collected data and predictive models. It allows users to quickly and easily visualize and explore data, compare countries, download datasets, train and use models, and predict GDP per capita by selecting feature values. Essentially, the website serves as a playground for policymakers, long-term investors, and other interested parties to visualize and compare economic data across countries and years.</p>
     </div>
 </div>
-
-<script>
-// Global GDP Map Visualization
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize the map
-    var map = L.map('gdp-map').setView([20, 0], 2);
-    
-    // Add OpenStreetMap tiles
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors'
-    }).addTo(map);
-    
-    // Add geographical data from backend
-    {% if geo_data.geographical is defined and not geo_data.geographical.empty %}
-    var geoData = {{ geo_data.geographical.to_json(orient='records') | safe }};
-    
-    // Create color scale for GDP
-    function getColor(gdp) {
-        return gdp > 50000 ? '#08519c' :
-               gdp > 25000 ? '#3182bd' :
-               gdp > 10000 ? '#6baed6' :
-               gdp > 5000  ? '#9ecae1' :
-               gdp > 1000  ? '#c6dbef' :
-                            '#deebf7';
-    }
-    
-    // Add markers for each country
-    geoData.forEach(function(country) {
-        if (country.lat && country.lng) {
-            var marker = L.circleMarker([country.lat, country.lng], {
-                color: '#ffffff',
-                weight: 1,
-                fillColor: getColor(country.gdp),
-                fillOpacity: 0.8,
-                radius: Math.log(country.gdp) * 2
-            }).addTo(map);
-            
-            // Add popup with country information
-            marker.bindPopup(`
-                <h6>${country.name}</h6>
-                <strong>GDP:</strong> $${country.gdp.toLocaleString()}<br>
-                <strong>Population:</strong> ${country.population.toLocaleString()}<br>
-                <strong>Life Expectancy:</strong> ${country.life_expectancy.toFixed(1)} years<br>
-                <strong>Internet:</strong> ${country.internet.toFixed(1)}%<br>
-                <strong>Urban Population:</strong> ${country.urban_pop.toFixed(1)}%
-            `);
-        }
-    });
-    
-    // Add legend
-    var legend = L.control({position: 'bottomright'});
-    legend.onAdd = function(map) {
-        var div = L.DomUtil.create('div', 'info legend');
-        var grades = [0, 1000, 5000, 10000, 25000, 50000];
-        var labels = [];
-        
-        div.innerHTML = '<h6>GDP per Capita</h6>';
-        for (var i = 0; i < grades.length; i++) {
-            div.innerHTML +=
-                '<div><i style="background:' + getColor(grades[i] + 1) + '; width: 18px; height: 18px; display: inline-block; margin-right: 8px;"></i> ' +
-                '$' + grades[i] + (grades[i + 1] ? '&ndash;$' + grades[i + 1] : '+') + '</div>';
-        }
-        return div;
-    };
-    legend.addTo(map);
-    {% endif %}
-    
-    // Correlation Chart using Plotly
-    {% if correlation_data is defined and not correlation_data.empty %}
-    var correlationData = {{ correlation_data.to_json(orient='records') | safe }};
-    
-    var trace = {
-        x: correlationData.map(d => d.life_expectancy),
-        y: correlationData.map(d => d.gdp),
-        mode: 'markers',
-        type: 'scatter',
-        name: 'Countries',
-        marker: {
-            size: correlationData.map(d => d.internet / 5),
-            color: correlationData.map(d => d.urban_pop),
-            colorscale: 'Viridis',
-            showscale: true,
-            colorbar: {
-                title: 'Urban Population %'
-            }
-        },
-        text: correlationData.map(d => d.country_name),
-        hovertemplate: '<b>%{text}</b><br>' +
-                      'Life Expectancy: %{x:.1f} years<br>' +
-                      'GDP: $%{y:,.0f}<br>' +
-                      '<extra></extra>'
-    };
-    
-    var layout = {
-        title: 'Life Expectancy vs GDP (Bubble size: Internet penetration, Color: Urbanization)',
-        xaxis: { title: 'Life Expectancy (years)' },
-        yaxis: { title: 'GDP per Capita ($)' },
-        showlegend: false,
-        height: 400
-    };
-    
-    Plotly.newPlot('correlation-chart', [trace], layout, {responsive: true});
-    {% endif %}
-});
-</script>
 {% endblock %}

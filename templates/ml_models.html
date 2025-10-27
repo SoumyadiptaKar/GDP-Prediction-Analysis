@@ -1,369 +1,598 @@
 {% extends "base.html" %}
 
-{% block title %}Machine Learning Models - GDP Analytics{% endblock %}
+{% block title %}ML Models - GDP Analytics{% endblock %}
 
-{% block content %}
-<div class="row">
-    <div class="col-12">
-        <h1 class="display-5 mb-4">
-            <i class="fas fa-brain me-3"></i>Machine Learning Models
-        </h1>
-        <p class="lead text-muted">Predict economic indicators using advanced machine learning algorithms</p>
-    </div>
-</div>
-
-<!-- Model Overview Cards -->
-<div class="row mb-4">
-    <div class="col-md-4 mb-3">
-        <div class="card model-card h-100">
-            <div class="card-body">
-                <h5 class="card-title">
-                    <i class="fas fa-chart-line text-primary me-2"></i>Linear Regression
-                </h5>
-                <p class="card-text">Predict GDP based on economic indicators using linear regression analysis.</p>
-                <div class="accuracy-meter mb-3">
-                    <div class="accuracy-fill" style="width: 85%"></div>
-                </div>
-                <small class="text-muted">Accuracy: 85%</small>
-                <div class="mt-3">
-                    <button class="btn btn-primary btn-sm" onclick="trainModel('linear')">
-                        <i class="fas fa-play me-1"></i>Train Model
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
+{% block extra_css %}
+<style>
+    .experiment-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        color: white;
+    }
     
-    <div class="col-md-4 mb-3">
-        <div class="card model-card h-100">
-            <div class="card-body">
-                <h5 class="card-title">
-                    <i class="fas fa-tree text-success me-2"></i>Random Forest
-                </h5>
-                <p class="card-text">Advanced ensemble method for more accurate predictions with feature importance.</p>
-                <div class="accuracy-meter mb-3">
-                    <div class="accuracy-fill" style="width: 92%"></div>
-                </div>
-                <small class="text-muted">Accuracy: 92%</small>
-                <div class="mt-3">
-                    <button class="btn btn-success btn-sm" onclick="trainModel('forest')">
-                        <i class="fas fa-play me-1"></i>Train Model
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
+    .experiment-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+    }
     
-    <div class="col-md-4 mb-3">
-        <div class="card model-card h-100">
-            <div class="card-body">
-                <h5 class="card-title">
-                    <i class="fas fa-network-wired text-info me-2"></i>Neural Network
-                </h5>
-                <p class="card-text">Deep learning approach for complex pattern recognition in economic data.</p>
-                <div class="accuracy-meter mb-3">
-                    <div class="accuracy-fill" style="width: 88%"></div>
-                </div>
-                <small class="text-muted">Accuracy: 88%</small>
-                <div class="mt-3">
-                    <button class="btn btn-info btn-sm" onclick="trainModel('neural')">
-                        <i class="fas fa-play me-1"></i>Train Model
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Model Training Interface -->
-<div class="row">
-    <div class="col-lg-8 mb-4">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="card-title mb-0">
-                    <i class="fas fa-cogs me-2"></i>Model Training
-                </h5>
-            </div>
-            <div class="card-body">
-                <form id="training-form">
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="target-variable" class="form-label">Target Variable</label>
-                            <select class="form-select" id="target-variable">
-                                <option value="gdp">GDP</option>
-                                <option value="life_expectancy">Life Expectancy</option>
-                                <option value="internet">Internet Penetration</option>
-                            </select>
-                        </div>
-                        
-                        <div class="col-md-6 mb-3">
-                            <label for="test-size" class="form-label">Test Size (%)</label>
-                            <input type="range" class="form-range" id="test-size" min="10" max="40" value="20" oninput="updateTestSize(this.value)">
-                            <small class="text-muted">Current: <span id="test-size-value">20</span>%</small>
-                        </div>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Feature Variables</label>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="feature-population" checked>
-                                    <label class="form-check-label" for="feature-population">Population</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="feature-life-expectancy" checked>
-                                    <label class="form-check-label" for="feature-life-expectancy">Life Expectancy</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="feature-internet" checked>
-                                    <label class="form-check-label" for="feature-internet">Internet Penetration</label>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="feature-urban-pop" checked>
-                                    <label class="form-check-label" for="feature-urban-pop">Urban Population</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="feature-enrollment" checked>
-                                    <label class="form-check-label" for="feature-enrollment">School Enrollment</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="feature-hci" checked>
-                                    <label class="form-check-label" for="feature-hci">Human Capital Index</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="d-flex justify-content-between">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-play me-2"></i>Train Models
-                        </button>
-                        <button type="button" class="btn btn-outline-secondary" onclick="resetForm()">
-                            <i class="fas fa-undo me-2"></i>Reset
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+    .metric-card {
+        background: rgba(255,255,255,0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.2);
+        border-radius: 10px;
+        padding: 1rem;
+        margin: 0.5rem 0;
+    }
     
-    <!-- Model Results -->
-    <div class="col-lg-4 mb-4">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="card-title mb-0">
-                    <i class="fas fa-chart-bar me-2"></i>Model Performance
-                </h5>
-            </div>
-            <div class="card-body">
-                <div id="model-results">
-                    <div class="text-center text-muted">
-                        <i class="fas fa-robot fa-3x mb-3"></i>
-                        <p>Train a model to see performance metrics</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Model Experimentation Section -->
-<div class="row mb-4">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header bg-info text-white">
-                <h5 class="card-title mb-0">
-                    <i class="fas fa-flask me-2"></i>Advanced Model Experimentation
-                </h5>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-8">
-                        <h6>Feature Impact Analysis</h6>
-                        <p class="text-muted mb-4">
-                            Compare different feature combinations and model types to understand what drives GDP predictions. 
-                            This analysis tests both explanatory models (understanding "why") and forecasting models (predicting "what").
-                        </p>
-                        
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="experiment-type" class="form-label">Experiment Type</label>
-                                <select class="form-select" id="experiment-type">
-                                    <option value="all">Complete Analysis (All Models)</option>
-                                    <option value="explanatory">Explanatory Models Only</option>
-                                    <option value="forecasting">Forecasting Models Only</option>
-                                    <option value="comparison">Model Comparison</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="evaluation-metric" class="form-label">Primary Metric</label>
-                                <select class="form-select" id="evaluation-metric">
-                                    <option value="rmse">RMSE (Root Mean Square Error)</option>
-                                    <option value="r2">R² (Coefficient of Determination)</option>
-                                    <option value="both">Both Metrics</option>
-                                </select>
-                            </div>
-                        </div>
-                        
-                        <button class="btn btn-info" onclick="runExperimentation()" id="experiment-btn">
-                            <i class="fas fa-play me-2"></i>Run Feature Impact Analysis
-                        </button>
-                    </div>
-                    
-                    <div class="col-md-4">
-                        <div class="bg-light rounded p-3">
-                            <h6><i class="fas fa-lightbulb text-warning me-2"></i>What This Does:</h6>
-                            <ul class="list-unstyled small">
-                                <li><i class="fas fa-check text-success me-1"></i>Tests 8 different feature combinations</li>
-                                <li><i class="fas fa-check text-success me-1"></i>Compares Linear Regression vs LightGBM</li>
-                                <li><i class="fas fa-check text-success me-1"></i>Evaluates recursive forecasting stability</li>
-                                <li><i class="fas fa-check text-success me-1"></i>Generates comparison visualizations</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Experiment Results -->
-                <div id="experiment-results" style="display: none;" class="mt-4">
-                    <hr>
-                    <h6><i class="fas fa-chart-bar me-2"></i>Experiment Results</h6>
-                    <div class="row" id="experiment-charts">
-                        <!-- Charts will be loaded here -->
-                    </div>
-                    <div class="mt-3">
-                        <div class="table-responsive">
-                            <table class="table table-sm" id="experiment-table">
-                                <!-- Results table will be loaded here -->
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Prediction Interface -->
-<div class="row">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="card-title mb-0">
-                    <i class="fas fa-crystal-ball me-2"></i>Make Predictions
-                </h5>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-lg-6">
-                        <h6>Input Values:</h6>
-                        <form id="prediction-form">
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="pred-population" class="form-label">Population</label>
-                                    <input type="number" class="form-control" id="pred-population" placeholder="e.g., 330000000">
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="pred-life-expectancy" class="form-label">Life Expectancy</label>
-                                    <input type="number" class="form-control" id="pred-life-expectancy" placeholder="e.g., 78.5" step="0.1">
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="pred-internet" class="form-label">Internet Penetration (%)</label>
-                                    <input type="number" class="form-control" id="pred-internet" placeholder="e.g., 85.5" step="0.1">
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="pred-urban-pop" class="form-label">Urban Population (%)</label>
-                                    <input type="number" class="form-control" id="pred-urban-pop" placeholder="e.g., 82.3" step="0.1">
-                                </div>
-                            </div>
-                            <button type="submit" class="btn btn-success">
-                                <i class="fas fa-magic me-2"></i>Predict GDP
-                            </button>
-                        </form>
-                    </div>
-                    <div class="col-lg-6">
-                        <h6>Prediction Result:</h6>
-                        <div id="prediction-result" class="border rounded p-3 bg-light">
-                            <div class="text-center text-muted">
-                                <i class="fas fa-question-circle fa-2x mb-2"></i>
-                                <p>Enter values and click "Predict GDP" to see the result</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+    .chart-container {
+        background: white;
+        border-radius: 10px;
+        padding: 1rem;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        margin: 1rem 0;
+    }
+    
+    .model-comparison {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+    
+    .experiment-btn {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        border: none;
+        border-radius: 25px;
+        padding: 12px 30px;
+        color: white;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 16px rgba(79, 172, 254, 0.3);
+    }
+    
+    .experiment-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(79, 172, 254, 0.4);
+        color: white;
+    }
+    
+    .loading-spinner {
+        display: none;
+        color: #4facfe;
+    }
+    
+    .results-section {
+        display: none;
+    }
+    
+    .model-badge {
+        background: rgba(255,255,255,0.2);
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        margin: 0.25rem;
+        display: inline-block;
+    }
+    
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .prediction-loading {
+        color: #4facfe;
+    }
+    
+    #predictionChart .plotly-graph-div {
+        border-radius: 10px;
+    }
+</style>
 {% endblock %}
 
-{% block extra_scripts %}
+{% block content %}
+<div class="container-fluid py-5">
+    <!-- Hero Section -->
+    <div class="row justify-content-center mb-5">
+        <div class="col-lg-8 text-center">
+            <div class="experiment-card p-5">
+                <h1 class="display-4 fw-bold mb-3">
+                    Machine Learning Models
+                </h1>
+                <p class="lead mb-4">
+                    Advanced GDP prediction using Linear Regression and LightGBM algorithms
+                </p>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="metric-card">
+                            <h5><i class="fas fa-chart-line me-2"></i>Linear Regression</h5>
+                            <p class="small mb-0">Traditional statistical approach for baseline predictions</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="metric-card">
+                            <h5><i class="fas fa-tree me-2"></i>LightGBM</h5>
+                            <p class="small mb-0">Gradient boosting for enhanced accuracy</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Experiment Controls -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-lg-6 text-center">
+            <button id="runExperiments" class="btn experiment-btn btn-lg">
+                <i class="fas fa-play me-2"></i>Run Model Experiments
+            </button>
+            <div class="loading-spinner mt-3">
+                <p class="mt-2">Running experiments might take a few moment...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Section -->
+    <div id="resultsSection" class="results-section">
+        <div class="row justify-content-center mb-4">
+            <div class="col-lg-10">
+                <div class="card model-comparison text-white">
+                    <div class="card-body p-4">
+                        <h3 class="card-title text-center mb-4">
+                            <i class="fas fa-chart-bar me-2"></i>Model Performance Comparison
+                        </h3>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="chart-container">
+                                    <h5 class="text-dark text-center mb-3">R² Score Comparison</h5>
+                                    <img id="r2Chart" src="" alt="R² Score Comparison" class="img-fluid" style="display: none;">
+                                    <div class="text-center text-muted" id="r2Placeholder">
+                                        <i class="fas fa-chart-area fa-3x mb-3"></i>
+                                        <p>Run experiments to see R² comparison</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="chart-container">
+                                    <h5 class="text-dark text-center mb-3">RMSE Comparison</h5>
+                                    <img id="rmseChart" src="" alt="RMSE Comparison" class="img-fluid" style="display: none;">
+                                    <div class="text-center text-muted" id="rmsePlaceholder">
+                                        <i class="fas fa-chart-line fa-3x mb-3"></i>
+                                        <p>Run experiments to see RMSE comparison</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Model Comparison Table -->
+        <div class="row justify-content-center mb-4">
+            <div class="col-lg-10">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="card-title mb-0">
+                            <i class="fas fa-balance-scale me-2"></i>Model Performance Comparison
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <div id="modelComparisonTable">
+                            <div class="text-center text-muted py-5">
+                                <i class="fas fa-flask fa-3x mb-3"></i>
+                                <h5>No experiments run yet</h5>
+                                <p>Click "Run Model Experiments" to see model performance comparison</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Country-Specific Prediction Results -->
+        <div class="row justify-content-center mb-4" id="countryResultsSection" style="display: none;">
+            <div class="col-lg-10">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <h4 class="card-title mb-0">
+                            <i class="fas fa-globe-americas me-2"></i>Country-Specific Prediction Results
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <div id="countryPredictionResults">
+                            <div class="text-center text-muted py-5">
+                                <i class="fas fa-map fa-3x mb-3"></i>
+                                <h5>No country predictions yet</h5>
+                                <p>Select a country and run prediction to see detailed results</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GDP Prediction Section -->
+    <div class="row justify-content-center mt-5">
+        <div class="col-lg-10">
+            <div class="card">
+                <div class="card-header bg-gradient-primary text-white">
+                    <h4 class="card-title mb-0">
+                        <i class="fas fa-crystal-ball me-2"></i>GDP Prediction for Specific Country
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="countrySelect" class="form-label fw-bold">Select Country:</label>
+                                <select id="countrySelect" class="form-select">
+                                    <option value="">Loading countries...</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="modelSelect" class="form-label fw-bold">Select Model:</label>
+                                <select id="modelSelect" class="form-select">
+                                    <option value="lgbm">LightGBM (Recommended)</option>
+                                    <option value="linear">Linear Regression</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="yearsPredict" class="form-label fw-bold">Prediction Years:</label>
+                                <select id="yearsPredict" class="form-select">
+                                    <option value="1">1 Year</option>
+                                    <option value="3" selected>3 Years</option>
+                                    <option value="5">5 Years</option>
+                                </select>
+                            </div>
+                            <button id="predictButton" class="btn btn-success btn-lg w-100" disabled>
+                                <i class="fas fa-magic me-2"></i>Predict GDP
+                            </button>
+                            <div class="prediction-loading mt-3" style="display: none;">
+                                <div class="text-center">
+                                    <i class="fas fa-spinner fa-spin fa-2x text-primary"></i>
+                                    <p class="mt-2">Generating predictions...</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div id="predictionChart" class="chart-container">
+                                <div class="text-center text-muted py-5">
+                                    <i class="fas fa-chart-area fa-3x mb-3"></i>
+                                    <h5>Select a country to see GDP predictions</h5>
+                                    <p>Interactive chart with historical data and future predictions</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Prediction Results Summary -->
+                    <div id="predictionSummary" class="mt-4" style="display: none;">
+                        <div class="alert alert-info">
+                            <h6><i class="fas fa-info-circle me-2"></i>Prediction Summary</h6>
+                            <div id="summaryContent"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Model Information -->
+    <div class="row justify-content-center mt-5">
+        <div class="col-lg-10">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header bg-warning text-dark">
+                            <h5 class="card-title mb-0">
+                                <i class="fas fa-chart-line me-2"></i>Linear Regression
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <p>A traditional statistical approach that models the relationship between GDP and social indicators using a linear equation.</p>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-check text-success me-2"></i>Simple and interpretable</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Fast training and prediction</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Good baseline model</li>
+                                <li><i class="fas fa-info-circle text-info me-2"></i>Assumes linear relationships</li>
+                            </ul>
+                            <div class="mt-3">
+                                <span class="model-badge">Regression</span>
+                                <span class="model-badge">Interpretable</span>
+                                <span class="model-badge">Baseline</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="card-title mb-0">
+                                <i class="fas fa-tree me-2"></i>LightGBM
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <p>A gradient boosting framework that uses tree-based learning algorithms for enhanced prediction accuracy.</p>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-check text-success me-2"></i>Handles non-linear patterns</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Feature importance ranking</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Robust to outliers</li>
+                                <li><i class="fas fa-chart-line text-primary me-2"></i>Higher accuracy potential</li>
+                            </ul>
+                            <div class="mt-3">
+                                <span class="model-badge">Gradient Boosting</span>
+                                <span class="model-badge">Non-linear</span>
+                                <span class="model-badge">Advanced</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <script>
-    // Model training functions
-    function trainModel(modelType) {
-        const button = event.target;
-        const originalText = button.innerHTML;
+document.addEventListener('DOMContentLoaded', function() {
+    const runButton = document.getElementById('runExperiments');
+    const loadingSpinner = document.querySelector('.loading-spinner');
+    const resultsSection = document.getElementById('resultsSection');
+    const experimentResults = document.getElementById('experimentResults');
+    
+    // Prediction elements
+    const countrySelect = document.getElementById('countrySelect');
+    const modelSelect = document.getElementById('modelSelect');
+    const yearsPredict = document.getElementById('yearsPredict');
+    const predictButton = document.getElementById('predictButton');
+    const predictionLoading = document.querySelector('.prediction-loading');
+    const predictionChart = document.getElementById('predictionChart');
+    const predictionSummary = document.getElementById('predictionSummary');
+    
+    // Load countries on page load
+    loadCountries();
+    
+    function loadCountries() {
+        fetch('/api/countries')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const countries = data.countries;
+                    countrySelect.innerHTML = '<option value="">Select a country...</option>';
+                    countries.forEach(country => {
+                        const option = document.createElement('option');
+                        option.value = country.country_code;
+                        option.textContent = `${country.country_name} (${country.country_code})`;
+                        countrySelect.appendChild(option);
+                    });
+                } else {
+                    countrySelect.innerHTML = '<option value="">Error loading countries</option>';
+                }
+            })
+            .catch(error => {
+                console.error('Error loading countries:', error);
+                countrySelect.innerHTML = '<option value="">Error loading countries</option>';
+            });
+    }
+    
+    // Enable predict button when country is selected
+    countrySelect.addEventListener('change', function() {
+        predictButton.disabled = !this.value;
+    });
+    
+    // Prediction functionality
+    predictButton.addEventListener('click', function() {
+        const countryCode = countrySelect.value;
+        const model = modelSelect.value;
+        const years = parseInt(yearsPredict.value);
         
-        // Show loading state
-        button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Training...';
-        button.disabled = true;
+        if (!countryCode) {
+            showAlert('warning', 'Please select a country first');
+            return;
+        }
         
-        // Simulate training (replace with actual API call)
-        setTimeout(() => {
-            // Reset button
-            button.innerHTML = originalText;
-            button.disabled = false;
+        // Show loading
+        predictionLoading.style.display = 'block';
+        predictButton.disabled = true;
+        
+        // Make prediction API call
+        fetch('/api/predict-gdp', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                country_code: countryCode,
+                model_type: model,
+                prediction_years: years
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            predictionLoading.style.display = 'none';
+            predictButton.disabled = false;
             
-            // Show results
-            showModelResults(modelType);
-            GDPAnalytics.showAlert(`${modelType} model trained successfully!`, 'success');
-        }, 3000);
-    }
+            if (data.success) {
+                displayPredictionChart(data);
+                showPredictionSummary(data);
+                
+                // Display country-specific prediction results if available
+                if (data.results_table || data.results) {
+                    displayCountryResults(data.results_table || data.results, data);
+                    // Show the country results section
+                    document.getElementById('countryResultsSection').style.display = 'block';
+                }
+                
+                showAlert('success', 'GDP prediction completed successfully!');
+            } else {
+                showAlert('danger', 'Error generating prediction: ' + (data.error || 'Unknown error'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            predictionLoading.style.display = 'none';
+            predictButton.disabled = false;
+            showAlert('danger', 'Network error while generating prediction');
+        });
+    });
     
-    function showModelResults(modelType) {
-        const resultsDiv = document.getElementById('model-results');
-        const accuracy = Math.random() * 0.15 + 0.8; // Random accuracy between 80-95%
+    function displayPredictionChart(data) {
+        const historical = data.historical_data;
+        const predictions = data.predictions;
         
-        resultsDiv.innerHTML = `
-            <h6>${modelType} Model Results:</h6>
-            <ul class="list-unstyled">
-                <li><strong>R² Score:</strong> ${accuracy.toFixed(3)}</li>
-                <li><strong>RMSE:</strong> ${(Math.random() * 1000 + 500).toFixed(0)}</li>
-                <li><strong>MAE:</strong> ${(Math.random() * 500 + 200).toFixed(0)}</li>
-                <li><strong>Training Time:</strong> ${(Math.random() * 10 + 5).toFixed(1)}s</li>
-            </ul>
-            <small class="text-success">✓ Model ready for predictions</small>
-        `;
+        // Historical data trace
+        const historicalTrace = {
+            x: historical.years,
+            y: historical.gdp_values,
+            type: 'scatter',
+            mode: 'lines+markers',
+            name: 'Historical GDP',
+            line: {
+                color: '#2E86AB',
+                width: 3
+            },
+            marker: {
+                size: 6,
+                color: '#2E86AB'
+            },
+            hovertemplate: '<b>Year: %{x}</b><br>' +
+                         'GDP per Capita: $%{y:,.2f}<br>' +
+                         '<extra></extra>'
+        };
+        
+        // Prediction data trace
+        const predictionTrace = {
+            x: predictions.years,
+            y: predictions.gdp_values,
+            type: 'scatter',
+            mode: 'lines+markers',
+            name: 'GDP Predictions',
+            line: {
+                color: '#A23B72',
+                width: 3,
+                dash: 'dot'
+            },
+            marker: {
+                size: 8,
+                color: '#A23B72',
+                symbol: 'diamond'
+            },
+            hovertemplate: '<b>Year: %{x}</b><br>' +
+                         'Predicted GDP per Capita: $%{y:,.2f}<br>' +
+                         '<extra></extra>'
+        };
+        
+        // Prediction confidence area (if available)
+        let traces = [historicalTrace, predictionTrace];
+        
+        if (predictions.confidence_intervals) {
+            const confidenceUpper = {
+                x: predictions.years,
+                y: predictions.confidence_intervals.upper,
+                type: 'scatter',
+                mode: 'lines',
+                name: 'Upper Confidence',
+                line: { color: 'rgba(162, 59, 114, 0.3)' },
+                showlegend: false,
+                hoverinfo: 'skip'
+            };
+            
+            const confidenceLower = {
+                x: predictions.years,
+                y: predictions.confidence_intervals.lower,
+                type: 'scatter',
+                mode: 'lines',
+                name: 'Prediction Range',
+                line: { color: 'rgba(162, 59, 114, 0.3)' },
+                fill: 'tonexty',
+                fillcolor: 'rgba(162, 59, 114, 0.2)',
+                hovertemplate: '<b>Year: %{x}</b><br>' +
+                              'Confidence Range: $%{y:,.2f}<br>' +
+                              '<extra></extra>'
+            };
+            
+            traces = [historicalTrace, confidenceUpper, confidenceLower, predictionTrace];
+        }
+        
+        const layout = {
+            title: {
+                text: `GDP Prediction for ${data.country_name} (${data.country_code})`,
+                font: { size: 18, color: '#2c3e50' }
+            },
+            xaxis: {
+                title: 'Year',
+                gridcolor: '#ecf0f1',
+                tickmode: 'linear',
+                dtick: 5
+            },
+            yaxis: {
+                title: 'GDP per Capita (USD)',
+                gridcolor: '#ecf0f1',
+                tickformat: '$,.0f'
+            },
+            plot_bgcolor: '#ffffff',
+            paper_bgcolor: '#ffffff',
+            hovermode: 'x unified',
+            legend: {
+                x: 0.02,
+                y: 0.98,
+                bgcolor: 'rgba(255,255,255,0.8)',
+                bordercolor: '#bdc3c7',
+                borderwidth: 1
+            },
+            margin: { t: 60, r: 40, b: 60, l: 80 },
+            height: 400
+        };
+        
+        const config = {
+            responsive: true,
+            displayModeBar: true,
+            modeBarButtonsToRemove: ['pan2d', 'lasso2d', 'select2d'],
+            displaylogo: false
+        };
+        
+        Plotly.newPlot('predictionChart', traces, layout, config);
     }
     
-    function updateTestSize(value) {
-        document.getElementById('test-size-value').textContent = value;
-    }
-    
-    function resetForm() {
-        document.getElementById('training-form').reset();
-        document.getElementById('test-size-value').textContent = '20';
-        document.getElementById('model-results').innerHTML = `
-            <div class="text-center text-muted">
-                <i class="fas fa-robot fa-3x mb-3"></i>
-                <p>Train a model to see performance metrics</p>
+    function showPredictionSummary(data) {
+        const predictions = data.predictions;
+        const lastHistorical = data.historical_data.gdp_values.slice(-1)[0];
+        const lastPredicted = predictions.gdp_values.slice(-1)[0];
+        const growthRate = ((lastPredicted - lastHistorical) / lastHistorical * 100).toFixed(1);
+        
+        const summaryHtml = `
+            <div class="row text-center">
+                <div class="col-md-3">
+                    <h6 class="text-muted">Current GDP (Latest)</h6>
+                    <h5 class="text-primary">$${lastHistorical.toLocaleString()}</h5>
+                </div>
+                <div class="col-md-3">
+                    <h6 class="text-muted">Predicted GDP (${predictions.years.slice(-1)[0]})</h6>
+                    <h5 class="text-success">$${lastPredicted.toLocaleString()}</h5>
+                </div>
+                <div class="col-md-3">
+                    <h6 class="text-muted">Expected Growth</h6>
+                    <h5 class="${growthRate >= 0 ? 'text-success' : 'text-danger'}">
+                        ${growthRate >= 0 ? '+' : ''}${growthRate}%
+                    </h5>
+                </div>
+                <div class="col-md-3">
+                    <h6 class="text-muted">Model Used</h6>
+                    <h5 class="text-info">${data.model_type === 'lgbm' ? 'LightGBM' : 'Linear Regression'}</h5>
+                </div>
             </div>
         `;
+        
+        document.getElementById('summaryContent').innerHTML = summaryHtml;
+        predictionSummary.style.display = 'block';
     }
     
-    // Model Experimentation Functions
-    function runExperimentation() {
-        const button = document.getElementById('experiment-btn');
-        const originalText = button.innerHTML;
-        
+    // Original experiment functionality
+    runButton.addEventListener('click', function() {
         // Show loading state
-        button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Running Experiments...';
-        button.disabled = true;
-        
-        // Show experiment results section
-        document.getElementById('experiment-results').style.display = 'block';
+        runButton.disabled = true;
+        loadingSpinner.style.display = 'block';
         
         // Make API call to run experiments
         fetch('/api/run-experiments', {
@@ -372,87 +601,319 @@
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                experiment_type: document.getElementById('experiment-type').value,
-                metric: document.getElementById('evaluation-metric').value
+                experiment_type: 'all',
+                metric: 'r2'
             })
         })
         .then(response => response.json())
         .then(data => {
-            displayExperimentResults(data);
-            button.innerHTML = originalText;
-            button.disabled = false;
+            // Hide loading state
+            loadingSpinner.style.display = 'none';
+            runButton.disabled = false;
+            
+            if (data.success) {
+                // Show results section
+                resultsSection.style.display = 'block';
+                
+                // Update charts if available
+                if (data.charts) {
+                    updateCharts(data.charts);
+                }
+                
+                // Display model comparison table
+                displayModelComparison(data.results_table || data.results || data.message);
+                
+                // Show success message
+                showAlert('success', 'Experiments completed successfully!');
+            } else {
+                showAlert('danger', 'Error running experiments: ' + (data.error || 'Unknown error'));
+            }
         })
         .catch(error => {
             console.error('Error:', error);
-            GDPAnalytics.showAlert('Error running experiments. Please try again.', 'error');
-            button.innerHTML = originalText;
-            button.disabled = false;
+            loadingSpinner.style.display = 'none';
+            runButton.disabled = false;
+            showAlert('danger', 'Network error while running experiments');
         });
-    }
-    
-    function displayExperimentResults(data) {
-        // Display experiment table
-        const tableDiv = document.getElementById('experiment-table');
-        if (data.results_table) {
-            tableDiv.innerHTML = data.results_table;
-        }
-        
-        // Display charts
-        const chartsDiv = document.getElementById('experiment-charts');
-        if (data.charts) {
-            chartsDiv.innerHTML = '';
-            data.charts.forEach((chart, index) => {
-                chartsDiv.innerHTML += `
-                    <div class="col-md-6 mb-3">
-                        <div class="card">
-                            <div class="card-body text-center">
-                                <img src="/static/experiment_charts/${chart}" class="img-fluid" alt="Experiment Chart ${index + 1}">
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-        
-        GDPAnalytics.showAlert('Experimentation completed successfully!', 'success');
-    }
-
-    // Handle form submissions
-    document.getElementById('training-form').addEventListener('submit', function(e) {
-        e.preventDefault();
-        trainModel('ensemble');
     });
     
-    document.getElementById('prediction-form').addEventListener('submit', function(e) {
-        e.preventDefault();
+    function updateCharts(charts) {
+        if (charts.r2_chart) {
+            const r2Chart = document.getElementById('r2Chart');
+            const r2Placeholder = document.getElementById('r2Placeholder');
+            r2Chart.src = charts.r2_chart;
+            r2Chart.style.display = 'block';
+            r2Placeholder.style.display = 'none';
+        }
         
-        // Get input values
-        const population = document.getElementById('pred-population').value;
-        const lifeExpectancy = document.getElementById('pred-life-expectancy').value;
-        const internet = document.getElementById('pred-internet').value;
-        const urbanPop = document.getElementById('pred-urban-pop').value;
+        if (charts.rmse_chart) {
+            const rmseChart = document.getElementById('rmseChart');
+            const rmsePlaceholder = document.getElementById('rmsePlaceholder');
+            rmseChart.src = charts.rmse_chart;
+            rmseChart.style.display = 'block';
+            rmsePlaceholder.style.display = 'none';
+        }
+    }
+    
+    function displayModelComparison(results) {
+        const modelComparisonTable = document.getElementById('modelComparisonTable');
         
-        if (!population || !lifeExpectancy || !internet || !urbanPop) {
-            GDPAnalytics.showAlert('Please fill in all fields', 'warning');
+        if (typeof results === 'string') {
+            // Check if it's HTML content (contains table tags)
+            if (results.includes('<table') || results.includes('<div')) {
+                modelComparisonTable.innerHTML = results;
+            } else {
+                modelComparisonTable.innerHTML = `
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        ${results}
+                    </div>
+                `;
+            }
             return;
         }
         
-        // Simulate prediction (replace with actual API call)
-        const predictedGDP = (parseInt(population) / 1000000) * 500 + 
-                           parseFloat(lifeExpectancy) * 100 + 
-                           parseFloat(internet) * 50 + 
-                           Math.random() * 10000;
+        if (Array.isArray(results) && results.length > 0) {
+            let html = `
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th scope="col"><i class="fas fa-flask me-2"></i>Experiment Scenario</th>
+                                <th scope="col"><i class="fas fa-chart-line me-2"></i>Linear Regression R²</th>
+                                <th scope="col"><i class="fas fa-tree me-2"></i>LightGBM R²</th>
+                                <th scope="col"><i class="fas fa-chart-bar me-2"></i>Linear Regression RMSE</th>
+                                <th scope="col"><i class="fas fa-chart-area me-2"></i>LightGBM RMSE</th>
+                                <th scope="col"><i class="fas fa-trophy me-2"></i>Better Model</th>
+                                <th scope="col"><i class="fas fa-percent me-2"></i>R² Improvement</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            results.forEach((result, index) => {
+                const r2Diff = ((result.lgbm_r2 - result.linear_r2) * 100).toFixed(1);
+                const r2DiffClass = r2Diff > 0 ? 'text-success' : 'text-danger';
+                const betterModel = result.lgbm_r2 > result.linear_r2 ? 'LightGBM' : 'Linear Regression';
+                const betterModelClass = result.lgbm_r2 > result.linear_r2 ? 'badge bg-success' : 'badge bg-warning';
+                const rowClass = index % 2 === 0 ? '' : 'table-light';
+                
+                html += `
+                    <tr class="${rowClass}">
+                        <td>
+                            <strong>${result.scenario}</strong>
+                            <br>
+                            <small class="text-muted">Experiment ${index + 1}</small>
+                        </td>
+                        <td>
+                            <span class="badge bg-primary">${result.linear_r2.toFixed(4)}</span>
+                            <br>
+                            <small class="text-muted">${(result.linear_r2 * 100).toFixed(1)}%</small>
+                        </td>
+                        <td>
+                            <span class="badge bg-success">${result.lgbm_r2.toFixed(4)}</span>
+                            <br>
+                            <small class="text-muted">${(result.lgbm_r2 * 100).toFixed(1)}%</small>
+                        </td>
+                        <td>
+                            <span class="text-info">${result.linear_rmse ? result.linear_rmse.toLocaleString() : 'N/A'}</span>
+                            <br>
+                            <small class="text-muted">USD</small>
+                        </td>
+                        <td>
+                            <span class="text-success">${result.lgbm_rmse ? result.lgbm_rmse.toLocaleString() : 'N/A'}</span>
+                            <br>
+                            <small class="text-muted">USD</small>
+                        </td>
+                        <td>
+                            <span class="${betterModelClass}">${betterModel}</span>
+                        </td>
+                        <td class="${r2DiffClass}">
+                            <strong>${r2Diff > 0 ? '+' : ''}${r2Diff}%</strong>
+                            <br>
+                            <i class="fas fa-${r2Diff > 0 ? 'arrow-up' : 'arrow-down'} ${r2DiffClass}"></i>
+                            <small>${r2Diff > 0 ? 'Better' : 'Worse'}</small>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-3 p-3 bg-light rounded">
+                    <div class="row text-center">
+                        <div class="col-md-3">
+                            <h6 class="text-muted mb-1">Total Experiments</h6>
+                            <h4 class="text-primary mb-0">${results.length}</h4>
+                        </div>
+                        <div class="col-md-3">
+                            <h6 class="text-muted mb-1">Best LightGBM R²</h6>
+                            <h4 class="text-success mb-0">${Math.max(...results.map(r => r.lgbm_r2)).toFixed(4)}</h4>
+                        </div>
+                        <div class="col-md-3">
+                            <h6 class="text-muted mb-1">Best Linear R²</h6>
+                            <h4 class="text-info mb-0">${Math.max(...results.map(r => r.linear_r2)).toFixed(4)}</h4>
+                        </div>
+                        <div class="col-md-3">
+                            <h6 class="text-muted mb-1">Avg Improvement</h6>
+                            <h4 class="text-warning mb-0">${(results.reduce((sum, r) => sum + (r.lgbm_r2 - r.linear_r2), 0) / results.length * 100).toFixed(1)}%</h4>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            modelComparisonTable.innerHTML = html;
+        } else {
+            modelComparisonTable.innerHTML = `
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    No detailed results available
+                </div>
+            `;
+        }
+    }
+
+    function displayCountryResults(results, predictionData) {
+        const countryResultsDiv = document.getElementById('countryPredictionResults');
         
-        document.getElementById('prediction-result').innerHTML = `
-            <div class="text-center">
-                <h4 class="text-success mb-3">
-                    <i class="fas fa-dollar-sign me-2"></i>
-                    ${GDPAnalytics.formatCurrency(predictedGDP * 1000000)}
-                </h4>
-                <p class="text-muted mb-0">Predicted GDP</p>
-                <small class="text-muted">Confidence: ${(85 + Math.random() * 10).toFixed(1)}%</small>
+        if (!results || (Array.isArray(results) && results.length === 0)) {
+            countryResultsDiv.innerHTML = `
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Country prediction completed successfully. Check the chart above for visual results.
+                </div>
+            `;
+            return;
+        }
+
+        // Create a detailed table for country-specific predictions
+        let html = `
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card border-primary">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-flag me-2"></i>Prediction Details for ${predictionData.country_name}
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6><i class="fas fa-info-circle me-2"></i>Model Information</h6>
+                                    <table class="table table-sm table-borderless">
+                                        <tr>
+                                            <td><strong>Model Type:</strong></td>
+                                            <td><span class="badge bg-${predictionData.model_type === 'lgbm' ? 'success' : 'primary'}">${predictionData.model_type === 'lgbm' ? 'LightGBM' : 'Linear Regression'}</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Country:</strong></td>
+                                            <td>${predictionData.country_name} (${predictionData.country_code})</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Prediction Years:</strong></td>
+                                            <td>${predictionData.predictions.years.length} years (${predictionData.predictions.years[0]} - ${predictionData.predictions.years.slice(-1)[0]})</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6><i class="fas fa-chart-line me-2"></i>Key Metrics</h6>
+                                    <table class="table table-sm table-borderless">
+                                        <tr>
+                                            <td><strong>Latest Historical GDP:</strong></td>
+                                            <td class="text-primary">$${predictionData.historical_data.gdp_values.slice(-1)[0].toLocaleString()}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Final Predicted GDP:</strong></td>
+                                            <td class="text-success">$${predictionData.predictions.gdp_values.slice(-1)[0].toLocaleString()}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Total Growth:</strong></td>
+                                            <td class="${((predictionData.predictions.gdp_values.slice(-1)[0] - predictionData.historical_data.gdp_values.slice(-1)[0]) / predictionData.historical_data.gdp_values.slice(-1)[0] * 100) >= 0 ? 'text-success' : 'text-danger'}">
+                                                ${((predictionData.predictions.gdp_values.slice(-1)[0] - predictionData.historical_data.gdp_values.slice(-1)[0]) / predictionData.historical_data.gdp_values.slice(-1)[0] * 100).toFixed(1)}%
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="table-success">
+                        <tr>
+                            <th scope="col"><i class="fas fa-calendar me-2"></i>Year</th>
+                            <th scope="col"><i class="fas fa-dollar-sign me-2"></i>Predicted GDP per Capita</th>
+                            <th scope="col"><i class="fas fa-percentage me-2"></i>Annual Growth Rate</th>
+                            <th scope="col"><i class="fas fa-chart-bar me-2"></i>Growth Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+
+        // Add prediction data rows
+        predictionData.predictions.years.forEach((year, index) => {
+            const gdpValue = predictionData.predictions.gdp_values[index];
+            let growthRate = 0;
+            
+            if (index === 0) {
+                // Compare first prediction year with last historical year
+                const lastHistoricalGdp = predictionData.historical_data.gdp_values.slice(-1)[0];
+                growthRate = ((gdpValue - lastHistoricalGdp) / lastHistoricalGdp * 100);
+            } else {
+                // Compare with previous prediction year
+                const previousGdp = predictionData.predictions.gdp_values[index - 1];
+                growthRate = ((gdpValue - previousGdp) / previousGdp * 100);
+            }
+
+            const growthClass = growthRate >= 0 ? 'text-success' : 'text-danger';
+            const growthIcon = growthRate >= 0 ? 'arrow-up' : 'arrow-down';
+            const statusBadge = growthRate >= 2 ? 'bg-success' : growthRate >= 0 ? 'bg-warning text-dark' : 'bg-danger';
+            const statusText = growthRate >= 2 ? 'Strong Growth' : growthRate >= 0 ? 'Moderate Growth' : 'Decline';
+
+            html += `
+                <tr>
+                    <td><strong>${year}</strong></td>
+                    <td class="text-primary">$${gdpValue.toLocaleString()}</td>
+                    <td class="${growthClass}">
+                        <i class="fas fa-${growthIcon} me-1"></i>
+                        ${growthRate >= 0 ? '+' : ''}${growthRate.toFixed(2)}%
+                    </td>
+                    <td>
+                        <span class="badge ${statusBadge}">${statusText}</span>
+                    </td>
+                </tr>
+            `;
+        });
+
+        html += `
+                    </tbody>
+                </table>
             </div>
         `;
-    });
+
+        countryResultsDiv.innerHTML = html;
+    }
+    
+    function showAlert(type, message) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+        alertDiv.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        
+        document.querySelector('.container-fluid').insertBefore(alertDiv, document.querySelector('.container-fluid').firstChild);
+        
+        // Auto-dismiss after 5 seconds
+        setTimeout(() => {
+            alertDiv.remove();
+        }, 5000);
+    }
+});
 </script>
 {% endblock %}

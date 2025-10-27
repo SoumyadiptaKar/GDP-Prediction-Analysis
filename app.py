@@ -241,7 +241,6 @@ def create_app(config_name=None):
     @app.route('/about')
     def about():
         """About page with team information."""
-        app.logger.info("Loading about page")
         return render_template('about.html')
     
     @app.route('/country/<country_code>')
@@ -277,20 +276,6 @@ def create_app(config_name=None):
     # ================================
     # API ROUTES
     # ================================
-    
-    @app.route('/api/countries')
-    def api_countries():
-        """API endpoint for countries data."""
-        try:
-            if not app.db:
-                return jsonify({'error': 'Database connection error'}), 500
-            
-            countries = app.db.get_all_countries()
-            return jsonify(countries.to_dict('records'))
-        
-        except Exception as e:
-            app.logger.error(f"Error in api_countries: {str(e)}")
-            return jsonify({'error': 'Internal server error'}), 500
     
     @app.route('/api/data/<country_code>')
     def api_country_data(country_code):
@@ -399,6 +384,151 @@ def create_app(config_name=None):
             app.logger.error(f"Error in api_stats: {str(e)}")
             return jsonify({'error': 'Internal server error'}), 500
     
+    @app.route('/api/countries')
+    def api_countries():
+        """API endpoint to get list of all countries."""
+        logger = get_logger('gdp_analytics.api')
+        try:
+            logger.info("Countries list requested")
+            
+            if not db:
+                logger.error("Database connection not available")
+                return jsonify({
+                    'success': False,
+                    'error': 'Database connection not available'
+                }), 500
+            
+            # Get only countries with GDP data using the new method
+            result = db.get_countries_with_gdp_data()
+            
+            if result.empty:
+                logger.warning("No countries found in database")
+                return jsonify({
+                    'success': False,
+                    'error': 'No countries found'
+                }), 404
+            
+            # Clean the data - remove rows with NaN values
+            result = result.dropna(subset=['country_code', 'name'])
+            
+            countries = []
+            for _, row in result.iterrows():
+                countries.append({
+                    'country_code': str(row['country_code']).strip(),
+                    'country_name': str(row['name']).strip()
+                })
+            
+            logger.info(f"Returning {len(countries)} countries")
+            return jsonify({
+                'success': True,
+                'countries': countries,
+                'count': len(countries)
+            })
+            
+        except Exception as e:
+            logger.error(f"Error fetching countries: {str(e)}")
+            return jsonify({
+                'success': False,
+                'error': f'Database error: {str(e)}'
+            }), 500
+
+    @app.route('/api/predict-gdp', methods=['POST'])
+    def api_predict_gdp():
+        """API endpoint for GDP prediction for specific country."""
+        logger = get_logger('gdp_analytics.api')
+        try:
+            data = request.get_json()
+            country_code = data.get('country_code')
+            model_type = data.get('model_type', 'lgbm')
+            prediction_years = data.get('prediction_years', 3)
+            
+            logger.info(f"GDP prediction requested for {country_code}, model: {model_type}, years: {prediction_years}")
+            
+            if not country_code:
+                return jsonify({
+                    'success': False,
+                    'error': 'Country code is required'
+                }), 400
+            
+            try:
+                from model_experiments import predict_gdp_for_country, run_model_comparison_for_country
+                
+                # Get the primary prediction
+                result = predict_gdp_for_country(country_code, model_type, prediction_years)
+                
+                if result['success']:
+                    # Also run model comparison to generate table data
+                    try:
+                        comparison_result = run_model_comparison_for_country(country_code)
+                        if comparison_result.get('success'):
+                            result['results_table'] = comparison_result.get('results', [])
+                            result['comparison_summary'] = comparison_result.get('summary', {})
+                    except Exception as comp_error:
+                        logger.warning(f"Model comparison failed: {comp_error}")
+                        # Continue without comparison data
+                    
+                    logger.info(f"GDP prediction completed for {country_code}")
+                    return jsonify(result)
+                else:
+                    logger.error(f"GDP prediction failed for {country_code}: {result.get('error')}")
+                    return jsonify(result), 500
+                    
+            except ImportError as import_error:
+                logger.warning(f"Could not import prediction function: {import_error}")
+                # Return mock prediction data
+                mock_result = generate_mock_prediction(country_code, prediction_years)
+                return jsonify(mock_result)
+                
+        except Exception as e:
+            logger.error(f"Error in GDP prediction: {str(e)}")
+            return jsonify({
+                'success': False,
+                'error': f'Prediction error: {str(e)}'
+            }), 500
+
+    def generate_mock_prediction(country_code, years):
+        """Generate mock prediction data when ML libraries aren't available."""
+        import random
+        current_year = 2023
+        base_gdp = random.randint(10000, 50000)
+        
+        # Mock historical data
+        historical_years = list(range(current_year - 10, current_year + 1))
+        historical_gdp = []
+        for i, year in enumerate(historical_years):
+            growth = 1 + random.uniform(-0.05, 0.05)  # Random growth between -5% and 5%
+            gdp = base_gdp * (growth ** i)
+            historical_gdp.append(gdp)
+        
+        # Mock prediction data
+        prediction_years_list = list(range(current_year + 1, current_year + years + 1))
+        prediction_gdp = []
+        last_gdp = historical_gdp[-1]
+        for i in range(years):
+            growth = 1 + random.uniform(0.01, 0.04)  # Positive growth for predictions
+            last_gdp *= growth
+            prediction_gdp.append(last_gdp)
+        
+        return {
+            'success': True,
+            'country_code': country_code,
+            'country_name': f'Country {country_code}',
+            'model_type': 'mock',
+            'historical_data': {
+                'years': historical_years,
+                'gdp_values': historical_gdp
+            },
+            'predictions': {
+                'years': prediction_years_list,
+                'gdp_values': prediction_gdp,
+                'confidence_intervals': {
+                    'upper': [gdp * 1.1 for gdp in prediction_gdp],
+                    'lower': [gdp * 0.9 for gdp in prediction_gdp]
+                }
+            },
+            'message': 'Mock prediction data (ML libraries not available)'
+        }
+
     @app.route('/api/run-experiments', methods=['POST'])
     def api_run_experiments():
         """API endpoint for running ML model experiments."""

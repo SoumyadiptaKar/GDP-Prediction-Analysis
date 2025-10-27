@@ -111,7 +111,7 @@ Visualization Features:
 - Geographic mapping (if coordinates used)
 
 Machine Learning Features:
-- Multiple regression models (Linear, Ridge, Lasso, Random Forest)
+- Multiple regression models comparison (Linear Regression vs LightGBM)
 - Feature selection algorithms
 - Model comparison interface
 - Hyperparameter tuning options
